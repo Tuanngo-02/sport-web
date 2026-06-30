@@ -12,81 +12,78 @@ import { getProductByTag } from "../../services/ProductService";
 import { Category } from "../../models/Category";
 import { Product } from "../../models/Product";
 import { useNavigate } from "react-router";
+
 const banners = [
   {
-    src: "https://theme.hstatic.net/200000174405/1001111911/14/block_home_category1_large.jpg?v=2429", // thay bằng đúng đường dẫn ảnh của bạn
-    alt: "Siêu sale giá sốc",
+    src: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=600",
+    alt: "Siêu sale thể thao",
   },
   {
-    src: "https://theme.hstatic.net/200000174405/1001111911/14/block_home_category2_grande.jpg?v=2429",
-    alt: "Hệ thống cửa hàng",
+    src: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600",
+    alt: "Hệ thống phòng tập",
   },
   {
-    src: "//theme.hstatic.net/200000174405/1001111911/14/block_home_category3_large.jpg?v=2429",
-    alt: "Balo túi xách",
+    src: "https://images.unsplash.com/photo-1553531384-397c80973a0b?auto=format&fit=crop&q=80&w=600",
+    alt: "Balo & Thiết bị leo núi",
   },
   {
-    src: "https://theme.hstatic.net/200000174405/1001111911/14/block_home_category4_grande.jpg?v=2429",
-    alt: "Sale toàn bộ sản phẩm",
+    src: "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80&w=600",
+    alt: "Ưu đãi trang phục chạy bộ",
   },
 ];
+
 const cards = [
   {
     title: "Sản Phẩm Mới",
-    image:
-      "https://bizweb.dktcdn.net/100/522/096/themes/959072/assets/section_gbanner_1.jpg?1754194218821",
+    image: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=600",
     large: true,
   },
   {
     title: "Xu hướng",
-    image:
-      "https://bizweb.dktcdn.net/100/522/096/themes/959072/assets/section_gbanner_2.jpg?1754194218821",
+    image: "https://images.unsplash.com/photo-1483721310020-0a334fc34424?auto=format&fit=crop&q=80&w=600",
   },
   {
     title: "Chiến dịch",
-    image:
-      "https://bizweb.dktcdn.net/100/522/096/themes/959072/assets/section_gbanner_3.jpg?1754194218821",
+    image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=600",
   },
   {
     title: "LOOKBOOK",
-    image:
-      "https://bizweb.dktcdn.net/100/522/096/themes/959072/assets/section_gbanner_4.jpg?1754194218821",
+    image: "https://images.unsplash.com/photo-1502224562085-639556652f33?auto=format&fit=crop&q=80&w=600",
   },
   {
-    title: "LOOKBOOK",
-    image:
-      "https://bizweb.dktcdn.net/100/522/096/themes/959072/assets/section_gbanner_4.jpg?1754194218821",
+    title: "Outdoor Gear",
+    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=600",
   },
 ];
+
 const newsItems = [
   {
     title: "Giày thể thao mới ra mắt",
-    image: "/images/news1.jpg",
-    description: "Khám phá mẫu giày chạy bộ mới nhất, nhẹ và bền vượt trội.",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=500",
+    description: "Khám phá mẫu giày chạy bộ mới nhất, nhẹ và bền vượt trội cho cự ly dài.",
   },
   {
-    title: "BST thu đông 2025",
-    image: "/images/news2.jpg",
-    description:
-      "Bộ sưu tập thời trang thể thao mới phù hợp mọi điều kiện thời tiết.",
+    title: "Bộ sưu tập thu đông 2026",
+    image: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&q=80&w=500",
+    description: "Bộ sưu tập thời trang dã ngoại chống gió, giữ nhiệt hiệu quả trong mọi điều kiện.",
   },
   {
     title: "Giảm giá 50% toàn bộ áo thun",
-    image: "/images/news3.jpg",
-    description: "Chương trình khuyến mãi hấp dẫn kéo dài đến hết tháng.",
+    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=500",
+    description: "Chương trình khuyến mãi hấp dẫn dành riêng cho áo thun dry-fit thoáng khí.",
   },
   {
-    title: "Trang phục bóng đá 2025",
-    image: "/images/news4.jpg",
-    description:
-      "Bộ sưu tập áo đấu mới cho mùa giải 2025 với chất liệu cao cấp.",
+    title: "Trang phục leo núi chuyên nghiệp",
+    image: "https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&q=80&w=500",
+    description: "Bộ sưu tập áo gió công nghệ Gore-Tex mới nhất cho trải nghiệm leo núi an toàn.",
   },
   {
-    title: "Mẹo bảo quản giày thể thao",
-    image: "/images/news5.jpg",
-    description: "Hướng dẫn bảo quản giày đúng cách để tăng độ bền.",
+    title: "Mẹo bảo quản giày thể thao đúng cách",
+    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=500",
+    description: "Hướng dẫn chi tiết cách vệ sinh và bảo quản giày chạy bộ để tăng tuổi thọ sử dụng.",
   },
 ];
+
 const category = [
   "Quần áo thể thao",
   "Giày thể thao",
@@ -95,39 +92,35 @@ const category = [
   "Nam",
   "Nữ",
 ];
+
 const HomePage = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(12); // 2 hàng đầu tiên
   const [selectedCategory, setSelectedCategory] = useState("Quần áo thể thao");
   const [categories, setCategories] = useState<Category[]>([]);
   const [dataProduct, setDataProduct] = useState<Product[]>([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchDataCategory();
   }, []);
+
   const fetchDataCategory = async () => {
     let data = await getRootCategory();
     if (data && data.code == 1000) {
       setCategories(data.result);
     }
   };
-  const handleShowMore = () => {
-    setVisibleCount((prev) => prev + 6); // mỗi lần hiện thêm 6 sp
-  };
+
   const fetchDataProductByTag = async (tag: String) => {
     let data = await getProductByTag(tag);
     if (data && data.code == 1000) {
-      console.log(data);
-
       setDataProduct(data.result);
     }
   };
+
   useEffect(() => {
     fetchDataProductByTag(selectedCategory);
   }, [selectedCategory]);
-  // Lọc sản phẩm theo danh mục (nếu có dữ liệu phân loại)
-  const filteredProducts = dataProduct.filter((product) => {
-    return product.categoryName === selectedCategory; // nếu bạn gắn category trong dữ liệu
-  });
 
   const scroll = (direction: "left" | "right") => {
     const amount = 300;
@@ -138,287 +131,155 @@ const HomePage = () => {
       });
     }
   };
-  const navigate = useNavigate()
+
   return (
-    <div className="bg-[#EEEEEF]">
-      {/* banner */}
+    <div className="bg-brand-bg min-h-screen">
+      {/* Banner */}
       <PromoSection />
-      {/* thanh nội dung */}
-      <div className="relative bg-white mx-auto max-w-2xl px-4 sm:px-3 lg:max-w-7xl lg:px-8 mb-16 mt-16">
-        <div
-          data-aos="fade-up"
-          className="best-services w-full bg-white flex flex-col space-y-10 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center lg:h-[110px] px-10 lg:py-0 py-10 aos-init aos-animate"
-        >
-          <div className="item">
-            <div className="flex space-x-5 items-center">
-              <div>
-                <span>
-                  <svg
-                    width="36"
-                    height="36"
-                    viewBox="0 0 36 36"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1 1H5.63636V24.1818H35"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M8.72763 35.0002C10.4347 35.0002 11.8185 33.6163 11.8185 31.9093C11.8185 30.2022 10.4347 28.8184 8.72763 28.8184C7.02057 28.8184 5.63672 30.2022 5.63672 31.9093C5.63672 33.6163 7.02057 35.0002 8.72763 35.0002Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M31.9073 35.0002C33.6144 35.0002 34.9982 33.6163 34.9982 31.9093C34.9982 30.2022 33.6144 28.8184 31.9073 28.8184C30.2003 28.8184 28.8164 30.2022 28.8164 31.9093C28.8164 33.6163 30.2003 35.0002 31.9073 35.0002Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M34.9982 1H11.8164V18H34.9982V1Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M11.8164 7.18164H34.9982"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                  </svg>
-                </span>
-              </div>
-              <div>
-                <p className="text-black text-[15px] font-700 tracking-wide mb-1">
-                  Miễn phí giao hàng
-                </p>
-                <p className="text-sm text-qgray">Khi đơn hàng hơn 999K</p>
-              </div>
+
+      {/* Services Wall */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 mb-16">
+        <div className="glass-panel rounded-2xl p-6 md:py-8 grid grid-cols-1 md:grid-cols-4 gap-8 md:divide-x md:divide-brand-gray-border">
+          <div className="flex items-center space-x-4 pl-0 md:pl-4">
+            <span className="p-3 bg-brand-accent/10 rounded-xl text-brand-accent">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="3" width="15" height="13" />
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                <circle cx="5.5" cy="18.5" r="2.5" />
+                <circle cx="18.5" cy="18.5" r="2.5" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-brand-primary font-bold text-sm font-display uppercase tracking-wider">Miễn phí giao hàng</p>
+              <p className="text-xs text-brand-gray-text mt-0.5">Cho hóa đơn từ 999K</p>
             </div>
           </div>
-          <div className="item">
-            <div className="flex space-x-5 items-center">
-              <div>
-                <span>
-                  <svg
-                    width="32"
-                    height="34"
-                    viewBox="0 0 32 34"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M31 17.4502C31 25.7002 24.25 32.4502 16 32.4502C7.75 32.4502 1 25.7002 1 17.4502C1 9.2002 7.75 2.4502 16 2.4502C21.85 2.4502 26.95 5.7502 29.35 10.7002"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                    ></path>
-                    <path
-                      d="M30.7 2L29.5 10.85L20.5 9.65"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                  </svg>
-                </span>
-              </div>
-              <div>
-                <p className="text-black text-[15px] font-700 tracking-wide mb-1">
-                  Trà hàng miễn phí
-                </p>
-                <p className="text-sm text-qgray">
-                  Trả hàng trong vòng 30 ngày
-                </p>
-              </div>
+
+          <div className="flex items-center space-x-4 pl-0 md:pl-8">
+            <span className="p-3 bg-brand-accent/10 rounded-xl text-brand-accent">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-brand-primary font-bold text-sm font-display uppercase tracking-wider">Trả hàng dễ dàng</p>
+              <p className="text-xs text-brand-gray-text mt-0.5">Miễn phí trong vòng 30 ngày</p>
             </div>
           </div>
-          <div className="item">
-            <div className="flex space-x-5 items-center">
-              <div>
-                <span>
-                  <svg
-                    width="32"
-                    height="38"
-                    viewBox="0 0 32 38"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M22.6654 18.667H9.33203V27.0003H22.6654V18.667Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M12.668 18.6663V13.6663C12.668 11.833 14.168 10.333 16.0013 10.333C17.8346 10.333 19.3346 11.833 19.3346 13.6663V18.6663"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M31 22C31 30.3333 24.3333 37 16 37C7.66667 37 1 30.3333 1 22V5.33333L16 2L31 5.33333V22Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                  </svg>
-                </span>
-              </div>
-              <div>
-                <p className="text-black text-[15px] font-700 tracking-wide mb-1">
-                  Phương thức thành toán
-                </p>
-                <p className="text-sm text-qgray">
-                  100% Đảm bảo thanh toán online
-                </p>
-              </div>
+
+          <div className="flex items-center space-x-4 pl-0 md:pl-8">
+            <span className="p-3 bg-brand-accent/10 rounded-xl text-brand-accent">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-brand-primary font-bold text-sm font-display uppercase tracking-wider">Bảo mật thanh toán</p>
+              <p className="text-xs text-brand-gray-text mt-0.5">Thanh toán online an toàn 100%</p>
             </div>
           </div>
-          <div className="item">
-            <div className="flex space-x-5 items-center">
-              <div>
-                <span>
-                  <svg
-                    width="32"
-                    height="35"
-                    viewBox="0 0 32 35"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M7 13H5.5C2.95 13 1 11.05 1 8.5V1H7"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                    ></path>
-                    <path
-                      d="M25 13H26.5C29.05 13 31 11.05 31 8.5V1H25"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                    ></path>
-                    <path
-                      d="M16 28V22"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                    ></path>
-                    <path
-                      d="M16 22C11.05 22 7 17.95 7 13V1H25V13C25 17.95 20.95 22 16 22Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                    <path
-                      d="M25 34H7C7 30.7 9.7 28 13 28H19C22.3 28 25 30.7 25 34Z"
-                      stroke="#29343d"
-                      stroke-width="2"
-                      stroke-miterlimit="10"
-                      stroke-linecap="square"
-                    ></path>
-                  </svg>
-                </span>
-              </div>
-              <div>
-                <p className="text-black text-[15px] font-700 tracking-wide mb-1">
-                  Chất lượng cao
-                </p>
-                <p className="text-sm text-qgray">
-                  Nguồn gốc sản phẩm đạt chuẩn
-                </p>
-              </div>
+
+          <div className="flex items-center space-x-4 pl-0 md:pl-8">
+            <span className="p-3 bg-brand-accent/10 rounded-xl text-brand-accent">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-brand-primary font-bold text-sm font-display uppercase tracking-wider">Chất lượng đạt chuẩn</p>
+              <p className="text-xs text-brand-gray-text mt-0.5">Nguồn gốc sản phẩm cam kết chính hãng</p>
             </div>
           </div>
         </div>
       </div>
-      {/* Môn thể thao yêu thích*/}
-      <div className="relative  mx-auto max-w-2xl px-4 sm:px-3 lg:max-w-7xl lg:px-8 mb-16">
-        <h2 className="text-2xl font-semibold mb-4">
-          MÔN THỂ THAO BẠN YÊU THÍCH
-          <div className="w-24 h-1  custom-bg-1 mt-1" />
-        </h2>
 
-        {/* Nút lướt trái/phải */}
-        <button
-          onClick={() => scroll("left")}
-          className="absolute top-1/2 -left-3 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-[#29343D] cursor-pointer hover:text-white"
-        >
-          <FaChevronLeft />
-        </button>
-        <button
-          onClick={() => scroll("right")}
-          className="absolute top-1/2 -right-3 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-[#29343D] cursor-pointer hover:text-white"
-        >
-          <FaChevronRight />
-        </button>
+      {/* Môn thể thao bạn yêu thích */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-16 relative">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl md:text-2xl font-bold font-display text-brand-primary tracking-tight">
+            MÔN THỂ THAO YÊU THÍCH
+          </h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll("left")}
+              className="bg-white border border-brand-gray-border p-2.5 rounded-full shadow-xs hover:bg-brand-primary hover:text-white transition-all btn-tactile cursor-pointer"
+            >
+              <FaChevronLeft size={14} />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="bg-white border border-brand-gray-border p-2.5 rounded-full shadow-xs hover:bg-brand-primary hover:text-white transition-all btn-tactile cursor-pointer"
+            >
+              <FaChevronRight size={14} />
+            </button>
+          </div>
+        </div>
 
         {/* Danh sách môn thể thao */}
         <div
           ref={scrollRef}
-          className="flex overflow-x-hidden space-x-4 scroll-smooth"
+          className="flex overflow-x-auto gap-5 pb-4 scroll-smooth scrollbar-hide"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {categories.map((sport, idx) => (
             <div
               key={idx}
-              className="min-w-[190px] w-40 flex-shrink-0 rounded-md shadow-sm text-black bg-white transition-all duration-300 transform 
-             hover:shadow-lg hover:-translate-y-0.5"
+              className="min-w-[170px] w-44 flex-shrink-0 group cursor-pointer bg-white border border-brand-gray-border rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300"
+              onClick={() => navigate(`/product?category=${sport.id}`)}
             >
-              <img
-                src="/images/demo.jpg"
-                alt="image"
-                className="w-full h-32 object-cover rounded-t-lg"
-              />
-              <div className="text-center p-2">
-                <h3 className="font-semibold">{sport.name}</h3>
+              <div className="aspect-[4/3] w-full overflow-hidden bg-brand-gray-light relative">
+                <img
+                  src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=200"
+                  alt={sport.name}
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                />
+              </div>
+              <div className="p-3 text-center">
+                <h3 className="font-bold text-xs text-brand-primary font-display tracking-wider uppercase group-hover:text-brand-accent transition-colors">
+                  {sport.name}
+                </h3>
               </div>
             </div>
           ))}
         </div>
       </div>
-      {/* 4 BANNER*/}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-4">
-        {banners.map((banner, index) => (
-          <div key={index} className="overflow-hidden rounded-lg shadow-lg">
-            <img
-              src={banner.src}
-              alt={banner.alt}
-              className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105"
-            />
-          </div>
-        ))}
+
+      {/* 4 Banners grid */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {banners.map((banner, index) => (
+            <div key={index} className="relative overflow-hidden rounded-2xl shadow-sm aspect-[4/3] group cursor-pointer">
+              <img
+                src={banner.src}
+                alt={banner.alt}
+                className="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/90 via-brand-primary/20 to-transparent p-4 flex flex-col justify-end">
+                <p className="text-white text-xs font-bold uppercase tracking-wider">{banner.alt}</p>
+                <p className="text-brand-accent text-[10px] font-bold mt-1 tracking-widest uppercase">Khám phá ngay →</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-      {/* Sản phẩm mới*/}
-      <div className="relative mx-auto max-w-2xl px-4 sm:px-3 lg:max-w-7xl lg:px-8 mb-16">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 mt-16">
-          <h2 className="text-2xl font-semibold mb-4">
+
+      {/* Sản phẩm mới nhất */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+          <h2 className="text-xl md:text-2xl font-bold font-display text-brand-primary tracking-tight">
             SẢN PHẨM MỚI NHẤT
-            <div className="w-24 h-1  custom-bg-1 mt-1" />
           </h2>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 bg-brand-gray-light p-1 rounded-xl border border-brand-gray-border">
             {category.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-1 rounded-sm border font-normal text-md transition cursor-pointer ${
+                className={`px-4 py-1.5 rounded-lg font-semibold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer ${
                   selectedCategory === cat
-                    ? "custom-bg-1 text-white"
-                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+                    ? "bg-brand-accent text-white shadow-xs"
+                    : "text-brand-gray-text hover:text-brand-primary hover:bg-zinc-200/50"
                 }`}
               >
                 {cat}
@@ -428,118 +289,126 @@ const HomePage = () => {
         </div>
 
         {/* Grid sản phẩm */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {dataProduct.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
-            >
+        {dataProduct.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
+            {dataProduct.slice(0, 10).map((product) => (
               <ProductBox
+                key={product.id}
                 id={product.id}
                 name={product.name}
                 branch={product.branch}
                 price={product.price}
                 discountPrice={product.discountPrice}
                 rating={product.rating}
-                colors={product.variants.map((v: any) => v.color)}
+                colors={product.variants?.map((v: any) => v.color) || []}
+                image={product.variants?.[0]?.imageProductVariant}
               />
-            </div>
-          ))}
-        </div>
-
-        {visibleCount < filteredProducts.length && (
-          <div className="text-center mt-6">
-            <button
-              onClick={handleShowMore}
-              className="px-6 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
-            >
-              Xem thêm
-            </button>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 border border-dashed border-brand-gray-border rounded-2xl bg-white">
+            <p className="text-brand-gray-text text-sm">Không tìm thấy sản phẩm trong danh mục này.</p>
           </div>
         )}
       </div>
-      {/*ảnh banner*/}
-      <div className="relative mx-auto max-w-2xl px-4 sm:px-3 lg:max-w-7xl  mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-          {/* Bên trái - Ảnh lớn */}
-          <div className="relative overflow-hidden group rounded-xl">
+
+      {/* Bento Grid layout */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          {/* Cột trái - Khối b Bento lớn */}
+          <div className="md:col-span-7 relative overflow-hidden group rounded-2xl aspect-[16/10] md:aspect-auto md:h-[420px] shadow-sm">
             <img
               src={cards[0].image}
               alt={cards[0].title}
-              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
             />
-            <div className="absolute bottom-4 left-4 text-white text-2xl font-bold">
-              <div className="relative inline-block">
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/90 via-brand-primary/30 to-transparent p-6 flex flex-col justify-end">
+              <h3 className="text-white text-2xl font-bold font-display uppercase tracking-tight">
                 {cards[0].title}
-                <span className="block h-[3px] custom-bg-1 w-12 transition-all duration-500 group-hover:w-20"></span>
-              </div>
+              </h3>
+              <p className="text-zinc-300 text-xs mt-1 max-w-sm">Trải nghiệm những trang bị tập luyện được thiết kế tối ưu cho hiệu năng tối đa.</p>
+              <button 
+                onClick={() => navigate('/product')}
+                className="mt-4 bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-xl btn-tactile w-fit"
+              >
+                Khám phá bộ sưu tập
+              </button>
             </div>
           </div>
 
-          {/* Bên phải - 3 ảnh nhỏ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Cột phải - 4 Khối nhỏ */}
+          <div className="md:col-span-5 grid grid-cols-2 gap-5">
             {cards.slice(1).map((card, index) => (
               <div
                 key={index}
-                className="relative overflow-hidden group rounded-xl"
+                className="relative overflow-hidden group rounded-2xl aspect-square shadow-sm cursor-pointer"
+                onClick={() => navigate('/product')}
               >
                 <img
                   src={card.image}
                   alt={card.title}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
-                <div className="absolute bottom-4 left-4 text-white text-xl font-bold">
-                  <div className="relative inline-block">
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/80 to-transparent p-4 flex flex-col justify-end">
+                  <h4 className="text-white text-sm font-bold font-display uppercase tracking-wider">
                     {card.title}
-                    <span className="block h-[3px] custom-bg-1 w-10 transition-all duration-500 group-hover:w-16"></span>
-                  </div>
+                  </h4>
+                  <p className="text-brand-accent text-[10px] font-bold mt-0.5 tracking-wider">Xem thêm →</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div className="relative mx-auto max-w-2xl px-4 sm:px-3 lg:max-w-7xl lg:px-8 pb-6">
-        <div className="px-6">
-          <h2 className="text-2xl font-semibold mb-6">
-            TIN TỨC SẢN PHẨM
-            <div className="w-24 h-1  custom-bg-1 mt-1" />
-          </h2>
-          <Swiper
-            modules={[Autoplay]}
-            slidesPerView={4}
-            spaceBetween={20}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true, // Dừng lại khi hover
-            }}
-            breakpoints={{
-              320: { slidesPerView: 1 },
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-              1280: { slidesPerView: 4 },
-            }}
-          >
-            {newsItems.map((item, index) => (
-              <SwiperSlide key={index}>
-                <div className="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden transition-all duration-300 cursor-pointer h-full flex flex-col">
+
+      {/* News Carousel */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+        <h2 className="text-xl md:text-2xl font-bold font-display text-brand-primary tracking-tight mb-8">
+          TIN TỨC NỔI BẬT
+        </h2>
+
+        <Swiper
+          modules={[Autoplay]}
+          slidesPerView={1}
+          spaceBetween={20}
+          autoplay={{
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+            1280: { slidesPerView: 4 },
+          }}
+        >
+          {newsItems.map((item, index) => (
+            <SwiperSlide key={index}>
+              <div className="bg-white border border-brand-gray-border rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col group">
+                <div className="aspect-[16/10] w-full overflow-hidden bg-brand-gray-light">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-48 w-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="p-4 flex-1 flex flex-col">
-                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600 flex-1">
+                </div>
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-brand-primary font-display group-hover:text-brand-accent transition-colors line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-brand-gray-text mt-2 line-clamp-3 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
+                  <span className="text-[10px] font-bold text-brand-accent uppercase tracking-wider mt-4 block">
+                    Đọc tiếp →
+                  </span>
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </div>
   );

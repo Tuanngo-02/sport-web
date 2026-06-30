@@ -18,53 +18,52 @@ import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from
 import BreadcrumbBox from '../../components/BreadcrumbBox'
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
+  { name: 'Phổ biến nhất', href: '#', current: true },
+  { name: 'Đánh giá tốt nhất', href: '#', current: false },
+  { name: 'Mới nhất', href: '#', current: false },
+  { name: 'Giá: Thấp đến Cao', href: '#', current: false },
+  { name: 'Giá: Cao đến Thấp', href: '#', current: false },
 ]
 const subCategories = [
-  { name: 'Totes', href: '#' },
-  { name: 'Backpacks', href: '#' },
-  { name: 'Travel Bags', href: '#' },
-  { name: 'Hip Bags', href: '#' },
-  { name: 'Laptop Sleeves', href: '#' },
+  { name: 'Trang phục nam', href: '#' },
+  { name: 'Trang phục nữ', href: '#' },
+  { name: 'Thiết bị leo núi', href: '#' },
+  { name: 'Dụng cụ chạy bộ', href: '#' },
+  { name: 'Phụ kiện dã ngoại', href: '#' },
 ]
 const filters = [
   {
     id: 'color',
-    name: 'Color',
+    name: 'Màu sắc',
     options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
-      { value: 'brown', label: 'Brown', checked: false },
-      { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false },
+      { value: 'white', label: 'Trắng', checked: false },
+      { value: 'black', label: 'Đen', checked: false },
+      { value: 'blue', label: 'Xanh dương', checked: true },
+      { value: 'grey', label: 'Xám', checked: false },
+      { value: 'green', label: 'Xanh lá', checked: false },
+      { value: 'orange', label: 'Cam', checked: false },
     ],
   },
   {
     id: 'category',
-    name: 'Category',
+    name: 'Danh mục',
     options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
+      { value: 'new-arrivals', label: 'Hàng mới về', checked: false },
+      { value: 'sale', label: 'Giảm giá', checked: false },
+      { value: 'outdoor', label: 'Dã ngoại', checked: true },
+      { value: 'training', label: 'Luyện tập', checked: false },
+      { value: 'accessories', label: 'Phụ kiện', checked: false },
     ],
   },
   {
     id: 'size',
-    name: 'Size',
+    name: 'Kích cỡ',
     options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true },
+      { value: 's', label: 'Size S', checked: false },
+      { value: 'm', label: 'Size M', checked: false },
+      { value: 'l', label: 'Size L', checked: false },
+      { value: 'xl', label: 'Size XL', checked: false },
+      { value: 'xxl', label: 'Size XXL', checked: true },
     ],
   },
 ]
@@ -72,43 +71,44 @@ const filters = [
 function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
 const ProductUserPage = () => {
-    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+
   return (
- <div className="bg-white">
+    <div className="bg-brand-bg min-h-screen font-sans">
       <div>
         {/* Mobile filter dialog */}
-        <Dialog open={mobileFiltersOpen} onClose={setMobileFiltersOpen} className="relative z-40 lg:hidden">
+        <Dialog open={mobileFiltersOpen} onClose={setMobileFiltersOpen} className="relative z-50 lg:hidden">
           <DialogBackdrop
             transition
-            className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-closed:opacity-0"
+            className="fixed inset-0 bg-brand-primary/45 backdrop-blur-xs transition-opacity duration-300 ease-linear data-closed:opacity-0"
           />
 
-          <div className="fixed inset-0 z-40 flex">
+          <div className="fixed inset-0 z-50 flex">
             <DialogPanel
               transition
-              className="relative ml-auto flex size-full max-w-xs transform flex-col overflow-y-auto bg-white pt-4 pb-6 shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full"
+              className="relative ml-auto flex size-full max-w-xs transform flex-col overflow-y-auto bg-white pt-4 pb-6 shadow-2xl transition duration-300 ease-in-out data-closed:translate-x-full"
             >
-              <div className="flex items-center justify-between px-4">
-                <h2 className="text-lg font-medium text-gray-900">Filters</h2>
+              <div className="flex items-center justify-between px-4 border-b border-brand-gray-border pb-3">
+                <h2 className="text-lg font-bold text-brand-primary font-display">Bộ Lọc</h2>
                 <button
                   type="button"
                   onClick={() => setMobileFiltersOpen(false)}
-                  className="relative -mr-2 flex size-10 items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                  className="relative -mr-2 flex size-10 items-center justify-center rounded-full text-brand-gray-text hover:bg-brand-gray-light hover:text-brand-primary transition-all"
                 >
-                  <span className="absolute -inset-0.5" />
                   <span className="sr-only">Close menu</span>
                   <XMarkIcon aria-hidden="true" className="size-6" />
                 </button>
               </div>
 
-              {/* Filters */}
-              <form className="mt-4 border-t border-gray-200">
-                <h3 className="sr-only">Categories</h3>
-                <ul role="list" className="px-2 py-3 font-medium text-gray-900">
+              {/* Filters Mobile */}
+              <form className="mt-4 px-4">
+                <h3 className="text-xs font-bold text-brand-gray-text uppercase tracking-wider mb-3">Loại sản phẩm</h3>
+                <ul role="list" className="space-y-2 pb-6 text-sm font-semibold text-brand-primary">
                   {subCategories.map((category) => (
                     <li key={category.name}>
-                      <a href={category.href} className="block px-2 py-3">
+                      <a href={category.href} className="block py-1 hover:text-brand-accent transition-colors">
                         {category.name}
                       </a>
                     </li>
@@ -116,54 +116,31 @@ const ProductUserPage = () => {
                 </ul>
 
                 {filters.map((section) => (
-                  <Disclosure key={section.id} as="div" className="border-t border-gray-200 px-4 py-6">
+                  <Disclosure key={section.id} as="div" className="border-t border-brand-gray-border py-4">
                     <h3 className="-mx-2 -my-3 flow-root">
-                      <DisclosureButton className="group flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                        <span className="font-medium text-gray-900">{section.name}</span>
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-white px-2 py-3 text-sm font-bold text-brand-primary hover:text-brand-accent transition-colors">
+                        <span>{section.name}</span>
                         <span className="ml-6 flex items-center">
-                          <PlusIcon aria-hidden="true" className="size-5 group-data-open:hidden" />
-                          <MinusIcon aria-hidden="true" className="size-5 group-not-data-open:hidden" />
+                          <PlusIcon aria-hidden="true" className="size-4 group-data-open:hidden text-brand-gray-text" />
+                          <MinusIcon aria-hidden="true" className="size-4 group-not-data-open:hidden text-brand-gray-text" />
                         </span>
                       </DisclosureButton>
                     </h3>
-                    <DisclosurePanel className="pt-6">
-                      <div className="space-y-6">
+                    <DisclosurePanel className="pt-4">
+                      <div className="space-y-4 pl-1">
                         {section.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex gap-3">
-                            <div className="flex h-5 shrink-0 items-center">
-                              <div className="group grid size-4 grid-cols-1">
-                                <input
-                                  defaultValue={option.value}
-                                  id={`filter-mobile-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  type="checkbox"
-                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                />
-                                <svg
-                                  fill="none"
-                                  viewBox="0 0 14 14"
-                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                >
-                                  <path
-                                    d="M3 8L6 11L11 3.5"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-checked:opacity-100"
-                                  />
-                                  <path
-                                    d="M3 7H11"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-indeterminate:opacity-100"
-                                  />
-                                </svg>
-                              </div>
-                            </div>
+                          <div key={option.value} className="flex items-center gap-3">
+                            <input
+                              defaultValue={option.value}
+                              defaultChecked={option.checked}
+                              id={`filter-mobile-${section.id}-${optionIdx}`}
+                              name={`${section.id}[]`}
+                              type="checkbox"
+                              className="size-4 rounded border-brand-gray-border text-brand-accent focus:ring-brand-accent accent-brand-accent cursor-pointer"
+                            />
                             <label
                               htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                              className="min-w-0 flex-1 text-gray-500"
+                              className="text-sm font-medium text-brand-gray-text cursor-pointer hover:text-brand-primary"
                             >
                               {option.label}
                             </label>
@@ -178,34 +155,34 @@ const ProductUserPage = () => {
           </div>
         </Dialog>
 
-        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between border-b border-gray-200 ">
-            <BreadcrumbBox/>
+        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-20">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-brand-gray-border pb-4 gap-4">
+            <BreadcrumbBox />
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-4 self-end md:self-auto">
               <Menu as="div" className="relative inline-block text-left">
                 <div>
-                  <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                    Sort
+                  <MenuButton className="group inline-flex justify-center items-center text-xs font-bold uppercase tracking-wider text-brand-gray-text hover:text-brand-primary transition-colors cursor-pointer">
+                    Sắp xếp
                     <ChevronDownIcon
                       aria-hidden="true"
-                      className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
+                      className="-mr-1 ml-1.5 size-4 text-brand-gray-text group-hover:text-brand-primary"
                     />
                   </MenuButton>
                 </div>
 
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-xl bg-white shadow-xl ring-1 ring-black/5 focus:outline-hidden transition duration-100 ease-out data-closed:scale-95 data-closed:transform data-closed:opacity-0"
                 >
-                  <div className="py-1">
+                  <div className="py-1.5 px-1.5 space-y-0.5">
                     {sortOptions.map((option) => (
                       <MenuItem key={option.name}>
                         <a
                           href={option.href}
                           className={classNames(
-                            option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                            'block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden',
+                            option.current ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-primary hover:bg-brand-gray-light',
+                            'block px-3 py-2 text-xs font-semibold rounded-lg transition-all',
                           )}
                         >
                           {option.name}
@@ -216,86 +193,67 @@ const ProductUserPage = () => {
                 </MenuItems>
               </Menu>
 
-              <button type="button" className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">
+              <button type="button" className="p-2 text-brand-gray-text hover:text-brand-primary rounded-full hover:bg-brand-gray-light transition-all cursor-pointer">
                 <span className="sr-only">View grid</span>
-                <Squares2X2Icon aria-hidden="true" className="size-5" />
+                <Squares2X2Icon aria-hidden="true" className="size-4.5" />
               </button>
+
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(true)}
-                className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
+                className="p-2 text-brand-gray-text hover:text-brand-primary rounded-full hover:bg-brand-gray-light transition-all lg:hidden cursor-pointer"
               >
                 <span className="sr-only">Filters</span>
-                <FunnelIcon aria-hidden="true" className="size-5" />
+                <FunnelIcon aria-hidden="true" className="size-4.5" />
               </button>
             </div>
           </div>
 
-          <section aria-labelledby="products-heading" className="pt-6 pb-24">
+          <section aria-labelledby="products-heading" className="pt-8">
             <h2 id="products-heading" className="sr-only">
               Products
             </h2>
 
-            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
-              {/* Filters */}
-              <form className="hidden lg:block">
-                <h3 className="sr-only">Categories</h3>
-                <ul role="list" className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href}>{category.name}</a>
-                    </li>
-                  ))}
-                </ul>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4 items-start">
+              {/* Sidebar Filters Desktop */}
+              <form className="hidden lg:block space-y-6">
+                <div>
+                  <h3 className="text-xs font-bold text-brand-gray-text uppercase tracking-widest mb-3">Loại sản phẩm</h3>
+                  <ul role="list" className="space-y-2 text-sm font-semibold text-brand-primary">
+                    {subCategories.map((category) => (
+                      <li key={category.name}>
+                        <a href={category.href} className="hover:text-brand-accent transition-colors block py-0.5">
+                          {category.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 {filters.map((section) => (
-                  <Disclosure key={section.id} as="div" className="border-b border-gray-200 py-6">
+                  <Disclosure key={section.id} as="div" className="border-t border-brand-gray-border pt-5">
                     <h3 className="-my-3 flow-root">
-                      <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                        <span className="font-medium text-gray-900">{section.name}</span>
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-brand-bg py-2 text-sm font-bold text-brand-primary hover:text-brand-accent transition-colors">
+                        <span>{section.name}</span>
                         <span className="ml-6 flex items-center">
-                          <PlusIcon aria-hidden="true" className="size-5 group-data-open:hidden" />
-                          <MinusIcon aria-hidden="true" className="size-5 group-not-data-open:hidden" />
+                          <PlusIcon aria-hidden="true" className="size-4 group-data-open:hidden text-brand-gray-text" />
+                          <MinusIcon aria-hidden="true" className="size-4 group-not-data-open:hidden text-brand-gray-text" />
                         </span>
                       </DisclosureButton>
                     </h3>
-                    <DisclosurePanel className="pt-6">
-                      <div className="space-y-4">
+                    <DisclosurePanel className="pt-4">
+                      <div className="space-y-3.5">
                         {section.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex gap-3">
-                            <div className="flex h-5 shrink-0 items-center">
-                              <div className="group grid size-4 grid-cols-1">
-                                <input
-                                  defaultValue={option.value}
-                                  defaultChecked={option.checked}
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  type="checkbox"
-                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                />
-                                <svg
-                                  fill="none"
-                                  viewBox="0 0 14 14"
-                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                >
-                                  <path
-                                    d="M3 8L6 11L11 3.5"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-checked:opacity-100"
-                                  />
-                                  <path
-                                    d="M3 7H11"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-indeterminate:opacity-100"
-                                  />
-                                </svg>
-                              </div>
-                            </div>
-                            <label htmlFor={`filter-${section.id}-${optionIdx}`} className="text-sm text-gray-600">
+                          <div key={option.value} className="flex items-center gap-3">
+                            <input
+                              defaultValue={option.value}
+                              defaultChecked={option.checked}
+                              id={`filter-${section.id}-${optionIdx}`}
+                              name={`${section.id}[]`}
+                              type="checkbox"
+                              className="size-4 rounded border-brand-gray-border text-brand-accent focus:ring-brand-accent accent-brand-accent cursor-pointer"
+                            />
+                            <label htmlFor={`filter-${section.id}-${optionIdx}`} className="text-sm font-semibold text-brand-gray-text cursor-pointer hover:text-brand-primary transition-colors">
                               {option.label}
                             </label>
                           </div>
@@ -308,7 +266,7 @@ const ProductUserPage = () => {
 
               {/* Product grid */}
               <div className="lg:col-span-3">
-                <ProductList/>
+                <ProductList />
               </div>
             </div>
           </section>

@@ -1,75 +1,55 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-} */
-/* Chấm đang active */
+/* Chấm đang active trong Swiper */
 .swiper-pagination-bullet-active {
-  background-color: rgba(243, 236, 236, 0.89) !important;
+  background-color: #ff4800 !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
 }
+
+.swiper-pagination-bullet {
+  background-color: #a1a1aa !important;
+  opacity: 0.6 !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Đồng bộ hóa hệ thống màu cũ sang hệ thống màu hiện đại */
 .custom-bg-1 {
-  background-color: #29343D !important;
+  background-color: #ff4800 !important; /* Điểm nhấn Cam Thể Thao */
 }
-.x {
-          background-color: #29343D !important;
-        color: #FFFFFF !important;
-}
+
 .custom-bg-2 {
-  background-color: rgba(179, 139, 89, 0.6)  !important;
+  background-color: #0d0e10 !important; /* Nền Charcoal */
 }
-/* xám */
+
 .custom-bg-3 {
-  background-color: #F0F0F0 !important;
+  background-color: #f4f4f5 !important; /* Xám kẽm nhạt */
 }
+
 .custom-bg-4 {
-  background-color: #FEFEFE !important;
+  background-color: #ffffff !important; /* Trắng tinh khiết */
 }
+
 .text-color-1 {
-  color: #29343D !important;
+  color: #ff4800 !important;
 }
+
 .text-color-2 {
-  color: #B38B59 !important;
+  color: #0d0e10 !important;
 }
+
 .text-color-3 {
-  color: #F0F0F0 !important;
+  color: #71717a !important; /* Chữ xám */
 }
+
 .text-color-4 {
-  color: #FEFEFE !important;
+  color: #ffffff !important;
+}
+
+/* Các lớp tiện ích bổ sung cho redesign */
+.border-active-orange {
+  border-color: #ff4800 !important;
+}
+
+.text-active-orange {
+  color: #ff4800 !important;
 }

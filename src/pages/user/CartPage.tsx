@@ -1,59 +1,47 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-  RadioGroup,
-} from "@headlessui/react";
+import React, { useEffect, useState } from "react";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, RadioGroup } from "@headlessui/react";
 import { IoIosArrowBack } from "react-icons/io";
-
-import {
-  Product,
-  ProductInCart,
-  ProductVariant,
-  VariantSizeStock,
-} from "../../models/Product";
-import { Cart } from "../../models/Cart";
+import { Product, ProductInCart, ProductVariant, VariantSizeStock } from "../../models/Product";
 import { getProductById } from "../../services/ProductService";
-import { postAddToCart } from "../../services/CartService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-interface CartPage {
+
+interface CartPageProps {
   isOpen: boolean;
   onClose: () => void;
   productId: number | undefined;
 }
-const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
+
+const CartPage = ({ isOpen, onClose, productId }: CartPageProps) => {
   function classNames(...classes: (string | false | null | undefined)[]) {
     return classes.filter(Boolean).join(" ");
   }
+
   const [arrProduct, setArrProduct] = useState<Product | null>(null);
   const [cartQuantity, setCartQuantity] = useState(1);
-  const [dataChangeProduct, setDataChangeProduct] =
-    useState<ProductVariant | null>(null);
+  const [dataChangeProduct, setDataChangeProduct] = useState<ProductVariant | null>(null);
   const [mappedProduct, setMappedProduct] = useState<Product | null>(null);
-  const [selectedSize, setSelectedSize] = useState<VariantSizeStock | null>(
-    null
-  );
+  const [selectedSize, setSelectedSize] = useState<VariantSizeStock | null>(null);
   const [cart, setCart] = useState<ProductInCart[]>(() => {
     const stored = localStorage.getItem("cart_guest");
     return stored ? JSON.parse(stored) : [];
   });
+  
   const navigate = useNavigate();
+
   useEffect(() => {
     if (isOpen && productId !== undefined) {
       fetchProductById(productId);
     }
   }, [isOpen, productId]);
+
   useEffect(() => {
     if ((dataChangeProduct?.sizeAndStock?.length ?? 0) > 0) {
-      const firstAvailable = dataChangeProduct?.sizeAndStock.find(
-        (s) => s.stock > 0
-      );
+      const firstAvailable = dataChangeProduct?.sizeAndStock.find((s) => s.stock > 0);
       if (firstAvailable) {
         setSelectedSize(firstAvailable);
+      } else {
+        setSelectedSize(null);
       }
     }
   }, [dataChangeProduct]);
@@ -68,6 +56,7 @@ const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
       }
     });
   };
+
   const fetchProductById = async (id: number) => {
     let data = await getProductById(id);
     if (data.code === 1000) {
@@ -75,7 +64,7 @@ const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
       const product = data.result;
       const mapped = {
         ...product,
-        changes: product.variants.map((v) => {
+        changes: product.variants.map((v: any) => {
           const [code, label] = v.color.split(" - ");
           return {
             id: v.id!,
@@ -85,9 +74,8 @@ const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
             alt: v.name,
           };
         }),
-
-        sizes: product.variants.flatMap((v) =>
-          v.sizeAndStock.map((p) => ({
+        sizes: product.variants.flatMap((v: any) =>
+          v.sizeAndStock.map((p: any) => ({
             id: p.id,
             name: p.size,
             inStock: p.stock > 0,
@@ -97,15 +85,16 @@ const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
       setMappedProduct(mapped);
       setDataChangeProduct(mapped.variants[0]);
     }
-  };  
+  };
+
   const handleClick = (value: any, idx: number) => {
-    const variant = mappedProduct?.variants[idx];
+    const variant = mappedProduct?.variants?.[idx];
     if (variant) {
       setDataChangeProduct(variant);
     }
     setCartQuantity(1);
   };
-  // Load giỏ hàng từ localStorage khi mở trang
+
   useEffect(() => {
     const storedCart = localStorage.getItem("cart_guest");
     if (storedCart) {
@@ -113,11 +102,15 @@ const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
     }
   }, []);
 
-  // Lưu giỏ hàng vào localStorage mỗi khi cart thay đổi
   useEffect(() => {
     localStorage.setItem("cart_guest", JSON.stringify(cart));
   }, [cart]);
+
   const AddToCart = (product: ProductInCart) => {
+    if (!selectedSize) {
+      toast.warning("Vui lòng chọn kích thước!");
+      return;
+    }
     const exist = cart.find((item) => item.productId === product.productId);
     if (exist) {
       const updatedCart = cart.map((item) =>
@@ -133,280 +126,224 @@ const CartPage = ({ isOpen, onClose, productId }: CartPage) => {
     } else {
       setCart([...cart, { ...product }]);
     }
-    toast.success("Đã thêm vào giỏ hàng")
+    toast.success("Đã thêm vào giỏ hàng!");
+    onClose();
     navigate("/cart");
   };
-  console.log(mappedProduct, "mappedProduct");
-  console.log(dataChangeProduct, "dataChangeProduct");
-  console.log(arrProduct, "arrProduct");
-  
+
   return (
-    <div>
-      <Dialog open={isOpen} onClose={onClose} className="relative z-70">
-        <DialogBackdrop
-          transition
-          className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
-        />
+    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-brand-primary/45 backdrop-blur-xs transition-opacity duration-300 ease-in-out data-closed:opacity-0"
+      />
 
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-              <DialogPanel
-                transition
-                className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700"
-              >
-                <div className="flex h-full flex-col overflow-y-auto bg-white shadow-xl">
-                  <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                    <div className="flex items-center ">
-                      <button
-                        type="button"
-                        onClick={onClose}
-                        className="relative -m-2 p-2 text-gray-400 hover:text-gray-500 mr-1 cursor-pointer"
-                      >
-                        <span className="absolute -inset-0.5" />
-                        <span className="sr-only">Close panel</span>
-                        <IoIosArrowBack aria-hidden="true" className="size-6" />
-                      </button>
-                      <DialogTitle className="text-lg font-medium text-color-1">
-                        Thay đổi lựa chọn
-                      </DialogTitle>
-                    </div>
-
-                    <div className="mt-8">
-                      <div className="flow-root">
-                        <ul
-                          role="list"
-                          className="-my-6 divide-y divide-gray-200"
-                        >
-                          {arrProduct && (
-                            <li key={arrProduct.id} className="flex py-6">
-                              <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                <img
-                                  alt="images"
-                                  src={dataChangeProduct?.imageProductVariant}
-                                  className="size-full object-cover"
-                                />
-                              </div>
-
-                              <div className="ml-4 flex flex-1 flex-col">
-                                <div>
-                                  <h1 className="text-2xl font-semibold">
-                                    {arrProduct.discountPrice ? 
-                                    (arrProduct.discountPrice ?? 0).toLocaleString(
-                                      "vi-VN"
-                                    ) : (arrProduct.price ?? 0).toLocaleString(
-                                      "vi-VN"
-                                    ) 
-                                    }{" "}
-                                    ₫
-                                  </h1>
-                                  <div className="text-lg font-medium text-gray-900 mt-2">
-                                    <h3>{dataChangeProduct?.name}</h3>
-                                  </div>
-                                </div>
-                                <div className="flex flex-1 items-end justify-between">
-                                  <p className="text-md text-gray-700">
-                                    {arrProduct.branch}
-                                  </p>
-                                  <p className="text-gray-500 text-sm">
-                                    Tồn kho: {selectedSize?.stock ?? 0}
-                                  </p>
-                                </div>
-                              </div>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-
-                      {/* Colors */}
-                      <div>
-                        <h3 className="text-md font-medium text-gray-900 mt-2">
-                          Màu sắc: <span>{}</span>
-                        </h3>
-                        <fieldset aria-label="Choose a color" className="mt-4">
-                          <div className="flex items-center gap-x-3">
-                            {mappedProduct?.changes?.map(
-                              (mappedProduct: any, idx: number) => (
-                                <div
-                                  key={idx}
-                                  className="flex rounded-full outline -outline-offset-1 outline-black/10"
-                                  onClick={() => {
-                                    handleClick(mappedProduct, idx);
-                                  }}
-                                >
-                                  <input
-                                    defaultValue={idx}
-                                    defaultChecked={
-                                      dataChangeProduct?.id ===
-                                      mappedProduct?.id
-                                    }
-                                    name="color"
-                                    type="radio"
-                                    aria-label={mappedProduct.label}
-                                    style={{
-                                      backgroundColor: mappedProduct.code,
-                                    }} // <-- set màu trực tiếp
-                                    className={classNames(
-                                      "size-8 appearance-none rounded-full checked:outline-2 checked:outline-offset-2 focus-visible:outline-3 focus-visible:outline-offset-3 cursor-pointer"
-                                    )}
-                                  />
-                                </div>
-                              )
-                            )}
-                          </div>
-                        </fieldset>
-                      </div>
-
-                      {/* Sizes */}
-                      <div className="mt-10">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-md font-medium text-gray-900">
-                            Kích thước:{" "}
-                            <span>
-                              {selectedSize?.size ?? "Chưa chọn size"}
-                            </span>
-                          </h3>
-                          <a
-                            href="#"
-                            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                          >
-                            Hướng dẫn chọn size
-                          </a>
-                        </div>
-
-                        <fieldset
-                          aria-label="Choose a size"
-                          className="mt-4 w-96"
-                        >
-                          <RadioGroup
-                            value={selectedSize}
-                            onChange={setSelectedSize} // sẽ tự nhận value từ Option
-                            className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-8"
-                          >
-                            {dataChangeProduct?.sizeAndStock?.map((s) => (
-                              <RadioGroup.Option
-                                key={s.size}
-                                value={s} // <-- khi chọn sẽ setSelectedSize(s.size)
-                                disabled={s.stock <= 0}
-                                className={({ active, checked }) =>
-                                  classNames(
-                                    s.stock > 0
-                                      ? "cursor-pointer bg-white text-gray-900 shadow-xs"
-                                      : "cursor-not-allowed bg-gray-50 text-gray-200",
-                                    checked ? "ring-2 ring-gray-500" : "",
-                                    "group relative flex items-center justify-center border border-gray-300 p-2 text-md font-medium uppercase hover:bg-gray-50 focus:outline-hidden sm:flex-1"
-                                  )
-                                }
-                              >
-                                <span>{s.size}</span>
-                              </RadioGroup.Option>
-                            ))}
-                          </RadioGroup>
-                        </fieldset>
-                      </div>
-                    </div>
+      <div className="fixed inset-0 overflow-hidden font-sans">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <DialogPanel
+              transition
+              className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700"
+            >
+              <div className="flex h-full flex-col overflow-y-auto bg-white shadow-2xl">
+                
+                {/* Header */}
+                <div className="flex-1 overflow-y-auto px-6 py-6">
+                  <div className="flex items-center gap-3 border-b border-brand-gray-border pb-4">
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="p-1.5 text-brand-gray-text hover:bg-brand-gray-light hover:text-brand-primary rounded-full transition-all cursor-pointer"
+                    >
+                      <IoIosArrowBack className="size-5" />
+                    </button>
+                    <DialogTitle className="text-base font-bold font-display text-brand-primary uppercase tracking-wider">
+                      Lựa chọn sản phẩm
+                    </DialogTitle>
                   </div>
 
-                  <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                    <div className="flex items-start justify-between w-full">
-                      {/* Cột bên trái: Số lượng */}
-                      <div className="flex flex-col">
-                        <label className="text-sm font-medium mb-1">
+                  {/* Body Content */}
+                  <div className="mt-6 space-y-6">
+                    {arrProduct && (
+                      <div className="flex gap-4 p-4 bg-brand-gray-light/60 border border-brand-gray-border rounded-2xl">
+                        <div className="w-24 h-24 bg-white border border-brand-gray-border rounded-xl p-2 flex items-center justify-center overflow-hidden flex-shrink-0">
+                          <img
+                            alt={arrProduct.name}
+                            src={dataChangeProduct?.imageProductVariant}
+                            className="max-h-full max-w-full object-contain rounded"
+                          />
+                        </div>
+
+                        <div className="flex-1 flex flex-col justify-between">
+                          <div>
+                            <span className="text-[10px] font-bold text-brand-gray-text uppercase tracking-widest block">
+                              {arrProduct.branch}
+                            </span>
+                            <h4 className="text-sm font-bold text-brand-primary font-display mt-0.5 line-clamp-2">
+                              {dataChangeProduct?.name || arrProduct.name}
+                            </h4>
+                          </div>
+                          
+                          <div className="flex justify-between items-baseline mt-2">
+                            <span className="text-base font-bold text-brand-accent font-display">
+                              {(arrProduct.discountPrice || arrProduct.price || 0).toLocaleString("vi-VN")} ₫
+                            </span>
+                            <span className="text-[10px] font-semibold text-brand-gray-text">
+                              Kho: {selectedSize?.stock ?? 0}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Color variants selector */}
+                    <div>
+                      <h3 className="text-xs font-bold text-brand-gray-text uppercase tracking-wider mb-2.5">
+                        Màu sắc: <span className="text-brand-primary">{dataChangeProduct?.color?.split(" - ")[1]}</span>
+                      </h3>
+                      <div className="flex items-center gap-2.5">
+                        {mappedProduct?.changes?.map((item: any, idx: number) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleClick(item, idx)}
+                            style={{ backgroundColor: item.code }}
+                            className={classNames(
+                              "size-7 rounded-full border border-zinc-300 ring-offset-2 transition-all cursor-pointer",
+                              dataChangeProduct?.id === item.id ? "ring-2 ring-brand-accent scale-105" : "hover:scale-102"
+                            )}
+                            title={item.label}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Size options selector */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2.5">
+                        <h3 className="text-xs font-bold text-brand-gray-text uppercase tracking-wider">
+                          Kích thước: <span className="text-brand-primary">{selectedSize?.size || "Chưa chọn"}</span>
+                        </h3>
+                        <a href="#" className="text-[11px] font-bold text-brand-accent hover:text-brand-accent-hover tracking-wider uppercase">
+                          Hướng dẫn chọn size
+                        </a>
+                      </div>
+
+                      <RadioGroup value={selectedSize} onChange={setSelectedSize} className="grid grid-cols-4 gap-2">
+                        {dataChangeProduct?.sizeAndStock?.map((s) => (
+                          <RadioGroup.Option
+                            key={s.size}
+                            value={s}
+                            disabled={s.stock <= 0}
+                            className={({ checked }) =>
+                              classNames(
+                                "flex items-center justify-center border py-2 text-xs font-bold uppercase rounded-xl transition-all outline-hidden cursor-pointer",
+                                s.stock > 0
+                                  ? checked
+                                    ? "border-brand-primary bg-brand-primary text-white"
+                                    : "border-brand-gray-border bg-white text-brand-primary hover:bg-brand-gray-light"
+                                  : "border-zinc-200 bg-zinc-50 text-zinc-300 cursor-not-allowed line-through"
+                              )
+                            }
+                          >
+                            <span>{s.size}</span>
+                          </RadioGroup.Option>
+                        ))}
+                      </RadioGroup>
+                    </div>
+
+                    {/* Quantity modifier and cost */}
+                    <div className="flex items-center justify-between border-t border-brand-gray-border pt-4">
+                      <div>
+                        <label className="text-xs font-bold text-brand-gray-text uppercase tracking-wider block">
                           Số lượng
                         </label>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 mt-1.5 bg-brand-gray-light border border-brand-gray-border p-0.5 rounded-lg w-fit">
                           <button
+                            type="button"
                             onClick={() => handleQuantityChange("minus")}
-                            className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-lg font-semibold rounded cursor-pointer"
+                            className="w-7.5 h-7.5 flex items-center justify-center bg-white hover:bg-zinc-200 text-brand-primary text-sm font-bold rounded-md transition-all cursor-pointer"
                           >
-                            <span>-</span>
+                            -
                           </button>
-
                           <input
                             type="text"
                             value={cartQuantity}
                             readOnly
-                            className="w-16 text-center border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-8 text-center font-bold text-xs bg-transparent border-none"
                           />
-
                           <button
+                            type="button"
                             onClick={() => handleQuantityChange("plus")}
-                            disabled={
-                              !selectedSize ||
-                              cartQuantity >= selectedSize.stock
-                            }
-                            className={`w-8 h-8 rounded ${
-                              !selectedSize ||
-                              cartQuantity >= selectedSize.stock
-                                ? "bg-gray-300 cursor-not-allowed"
-                                : "bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                            }`}
+                            disabled={!selectedSize || cartQuantity >= selectedSize.stock}
+                            className={classNames(
+                              "w-7.5 h-7.5 flex items-center justify-center text-brand-primary text-sm font-bold rounded-md transition-all",
+                              !selectedSize || cartQuantity >= selectedSize.stock
+                                ? "bg-zinc-200/50 text-zinc-300 cursor-not-allowed"
+                                : "bg-white hover:bg-zinc-200 cursor-pointer"
+                            )}
                           >
-                            <span>+</span>
+                            +
                           </button>
                         </div>
                       </div>
 
-                      {/* Cột bên phải: Tổng tiền */}
-                      <div className="text-right ml-4">
-                        <label className="text-sm font-medium mb-1 block">
-                          Tổng
+                      <div className="text-right">
+                        <label className="text-xs font-bold text-brand-gray-text uppercase tracking-wider block mb-1">
+                          Tổng cộng
                         </label>
-                        <p className="text-base font-semibold text-red-600">
-                          {/* .toLocaleString('vi-VN') */}
-                          {mappedProduct?.discountPrice ? 
-                          (
-                            cartQuantity * (mappedProduct?.discountPrice ?? 0)
-                          ).toLocaleString("vi-VN")
-                          : (
-                            cartQuantity * (mappedProduct?.price ?? 0)
-                          ).toLocaleString("vi-VN")
-                          }
-                          đ
+                        <p className="text-lg font-bold text-brand-primary font-display">
+                          {(
+                            cartQuantity *
+                            (arrProduct?.discountPrice || arrProduct?.price || 0)
+                          ).toLocaleString("vi-VN")}₫
                         </p>
                       </div>
                     </div>
-
-                    <div className="mt-6">
-                      <button
-                        onClick={() =>
-                          AddToCart({
-                            productId: selectedSize?.id!,
-                            code: dataChangeProduct?.code!,
-                            color: dataChangeProduct?.color!,
-                            name: dataChangeProduct?.name!,
-                            size: selectedSize?.size!,
-                            quantity: cartQuantity,
-                            price: mappedProduct?.price!,
-                            image: dataChangeProduct?.imageProductVariant!,
-                          })
-                        }
-                        className="w-full flex items-center justify-center rounded-md border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-red-700 cursor-pointer"
-                      >
-                        Thêm vào giỏ hàng
-                      </button>
-                    </div>
-                    <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                      <p>
-                        hoặc{" "}
-                        <button
-                          type="button"
-                          onClick={onClose}
-                          className="font-medium text-red-600 hover:text-red-500 cursor-pointer"
-                        >
-                          Tiếp tục mua sắm
-                          <span aria-hidden="true"> &rarr;</span>
-                        </button>
-                      </p>
-                    </div>
                   </div>
                 </div>
-              </DialogPanel>
-            </div>
+
+                {/* Footer action button */}
+                <div className="border-t border-brand-gray-border px-6 py-6 bg-brand-gray-light/30">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      AddToCart({
+                        productId: selectedSize?.id!,
+                        code: dataChangeProduct?.code!,
+                        color: dataChangeProduct?.color!,
+                        name: dataChangeProduct?.name!,
+                        size: selectedSize?.size!,
+                        quantity: cartQuantity,
+                        price: arrProduct?.discountPrice || arrProduct?.price || 0,
+                        image: dataChangeProduct?.imageProductVariant!,
+                      })
+                    }
+                    className="w-full flex items-center justify-center rounded-xl bg-brand-primary hover:bg-brand-accent text-white py-3.5 text-xs font-bold uppercase tracking-wider btn-tactile shadow-lg transition-all cursor-pointer"
+                  >
+                    Thêm vào giỏ hàng
+                  </button>
+                  
+                  <div className="mt-4 flex justify-center text-center text-xs font-semibold text-brand-gray-text">
+                    <p>
+                      hoặc{" "}
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="font-bold text-brand-accent hover:text-brand-accent-hover cursor-pointer"
+                      >
+                        Tiếp tục mua sắm &rarr;
+                      </button>
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </DialogPanel>
           </div>
         </div>
-      </Dialog>
-    </div>
+      </div>
+    </Dialog>
   );
 };
 

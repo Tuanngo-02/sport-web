@@ -9,12 +9,11 @@ const postLogin = (auth: Auth): Promise<ApiResponse<LoginResult>> => {
   });
 };
 const postRegister = (auth: Auth): Promise<ApiResponse<Auth>> => {
-    return  axios.post(`/auth/register`, 
-    
-        {email: auth.email , password: auth.password, fullName: auth.fullName}
-    );
+  return axios.post(`/auth/register`,
+    { email: auth.email, password: auth.password, fullName: auth.fullName }
+  );
 }
 export {
-    postLogin,
-    postRegister
+  postLogin,
+  postRegister
 }

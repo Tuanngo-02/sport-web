@@ -419,119 +419,127 @@ const NavBar = () => {
               <div className="flex h-full space-x-8">
                 {navigation.categories.map((category) => (
                   <Popover key={category.name} className="flex">
-                    <div className="relative flex">
-                      <PopoverButton className="relative z-10 -mb-px flex items-center border-b-2 border-transparent pt-px text-sm font-semibold text-brand-primary transition-colors duration-200 hover:text-brand-accent hover:border-brand-accent outline-none cursor-pointer data-[open]:border-brand-accent data-[open]:text-brand-accent">
-                        {category.name}
-                      </PopoverButton>
-                    </div>
+                    {({ close }) => (
+                      <>
+                        <div className="relative flex">
+                          <PopoverButton className="relative z-10 -mb-px flex items-center border-b-2 border-transparent pt-px text-sm font-semibold text-brand-primary transition-colors duration-200 hover:text-brand-accent hover:border-brand-accent outline-none cursor-pointer data-[open]:border-brand-accent data-[open]:text-brand-accent">
+                            {category.name}
+                          </PopoverButton>
+                        </div>
 
-                    <PopoverPanel
-                      transition
-                      className="absolute inset-x-0 top-full text-sm text-brand-primary shadow-2xl transition duration-200 ease-out data-closed:opacity-0 data-closed:translate-y-1"
-                    >
-                      <div className="relative bg-white border-b border-brand-gray-border">
-                        <div className="mx-auto max-w-7xl px-8 py-8">
-                          <div className="grid grid-cols-4 gap-8">
-                            {/* Column 1: Root Categories */}
-                            <div className="space-y-1 pr-4 border-r border-brand-gray-border">
-                              <h3 className="text-xs font-bold text-brand-gray-text tracking-wider uppercase mb-3">Danh Mục Chính</h3>
-                              {listRootCategories && listRootCategories.length > 0 && listRootCategories.map((listRoot) => (
-                                <button
-                                  key={listRoot.id}
-                                  onClick={() => {
-                                    fetchChildrenCategories(listRoot.id!);
-                                    setActiveCategoryId(listRoot.id!);
-                                  }}
-                                  className={`w-full flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg transition-all ${
-                                    activeCategoryId === listRoot.id
-                                      ? "bg-brand-accent/10 text-brand-accent"
-                                      : "hover:bg-brand-gray-light text-brand-primary"
-                                  }`}
-                                >
-                                  <span>{listRoot.name}</span>
-                                  <IoIosArrowForward className={`size-3.5 transition-transform ${activeCategoryId === listRoot.id ? 'translate-x-1' : ''}`} />
-                                </button>
-                              ))}
-                            </div>
-
-                            {/* Column 2: Children Categories */}
-                            <div className="space-y-1 pr-4 border-r border-brand-gray-border">
-                              <h3 className="text-xs font-bold text-brand-gray-text tracking-wider uppercase mb-3">Danh Mục Con</h3>
-                              {selectedParentId ? (
-                                listChildrenCategories && listChildrenCategories.length > 0 ? (
-                                  listChildrenCategories.map((child) => (
+                        <PopoverPanel
+                          transition
+                          className="absolute inset-x-0 top-full text-sm text-brand-primary shadow-2xl transition duration-200 ease-out data-closed:opacity-0 data-closed:translate-y-1"
+                        >
+                          <div className="relative bg-white border-b border-brand-gray-border">
+                            <div className="mx-auto max-w-7xl px-8 py-8">
+                              <div className="grid grid-cols-4 gap-8">
+                                {/* Column 1: Root Categories */}
+                                <div className="space-y-1 pr-4 border-r border-brand-gray-border">
+                                  <h3 className="text-xs font-bold text-brand-gray-text tracking-wider uppercase mb-3">Danh Mục Chính</h3>
+                                  {listRootCategories && listRootCategories.length > 0 && listRootCategories.map((listRoot) => (
                                     <button
-                                      key={child.id}
+                                      key={listRoot.id}
                                       onClick={() => {
-                                        fetchChildrenCategoriesSub(child.id!);
-                                        setActiveCategorySubId(child.id!);
+                                        fetchChildrenCategories(listRoot.id!);
+                                        setActiveCategoryId(listRoot.id!);
                                       }}
                                       className={`w-full flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg transition-all ${
-                                        activeCategorySubId === child.id
+                                        activeCategoryId === listRoot.id
                                           ? "bg-brand-accent/10 text-brand-accent"
                                           : "hover:bg-brand-gray-light text-brand-primary"
                                       }`}
                                     >
-                                      <span>{child.name}</span>
-                                      <IoIosArrowForward className={`size-3.5 transition-transform ${activeCategorySubId === child.id ? 'translate-x-1' : ''}`} />
+                                      <span>{listRoot.name}</span>
+                                      <IoIosArrowForward className={`size-3.5 transition-transform ${activeCategoryId === listRoot.id ? 'translate-x-1' : ''}`} />
                                     </button>
-                                  ))
-                                ) : (
-                                  <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Không có danh mục con</p>
-                                )
-                              ) : (
-                                <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Chọn danh mục chính để xem</p>
-                              )}
-                            </div>
+                                  ))}
+                                </div>
 
-                            {/* Column 3: Sub Children Categories */}
-                            <div className="space-y-1 pr-4 border-r border-brand-gray-border">
-                              <h3 className="text-xs font-bold text-brand-gray-text tracking-wider uppercase mb-3">Chi Tiết</h3>
-                              {selectedChildId ? (
-                                listChildrenCategoriesSub && listChildrenCategoriesSub.length > 0 ? (
-                                  listChildrenCategoriesSub.map((subChild) => (
-                                    <button
-                                      key={subChild.id}
-                                      onClick={() => {
-                                        navigate(`/product?category=${subChild.id}`);
-                                      }}
-                                      className="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-brand-gray-light text-brand-primary hover:text-brand-accent transition-all"
-                                    >
-                                      {subChild.name}
-                                    </button>
-                                  ))
-                                ) : (
-                                  <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Không có chi tiết danh mục</p>
-                                )
-                              ) : (
-                                <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Chọn danh mục con để xem</p>
-                              )}
-                            </div>
+                                {/* Column 2: Children Categories */}
+                                <div className="space-y-1 pr-4 border-r border-brand-gray-border">
+                                  <h3 className="text-xs font-bold text-brand-gray-text tracking-wider uppercase mb-3">Danh Mục Con</h3>
+                                  {selectedParentId ? (
+                                    listChildrenCategories && listChildrenCategories.length > 0 ? (
+                                      listChildrenCategories.map((child) => (
+                                        <button
+                                          key={child.id}
+                                          onClick={() => {
+                                            fetchChildrenCategoriesSub(child.id!);
+                                            setActiveCategorySubId(child.id!);
+                                          }}
+                                          className={`w-full flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg transition-all ${
+                                            activeCategorySubId === child.id
+                                              ? "bg-brand-accent/10 text-brand-accent"
+                                              : "hover:bg-brand-gray-light text-brand-primary"
+                                          }`}
+                                        >
+                                          <span>{child.name}</span>
+                                          <IoIosArrowForward className={`size-3.5 transition-transform ${activeCategorySubId === child.id ? 'translate-x-1' : ''}`} />
+                                        </button>
+                                      ))
+                                    ) : (
+                                      <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Không có danh mục con</p>
+                                    )
+                                  ) : (
+                                    <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Chọn danh mục chính để xem</p>
+                                  )}
+                                </div>
 
-                            {/* Column 4: Promotional Asset */}
-                            <div className="flex flex-col justify-between">
-                              <div className="relative rounded-xl overflow-hidden bg-brand-gray-light aspect-[4/3] shadow-md group">
-                                <img
-                                  src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&q=80&w=400"
-                                  alt="Featured Promotion"
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/80 to-transparent p-4 flex flex-col justify-end">
-                                  <p className="text-white text-xs font-bold uppercase tracking-wider">New Arrivals</p>
-                                  <p className="text-white text-sm font-semibold mt-1">Đồ thể thao chạy bộ mới nhất</p>
+                                {/* Column 3: Sub Children Categories */}
+                                <div className="space-y-1 pr-4 border-r border-brand-gray-border">
+                                  <h3 className="text-xs font-bold text-brand-gray-text tracking-wider uppercase mb-3">Chi Tiết</h3>
+                                  {selectedChildId ? (
+                                    listChildrenCategoriesSub && listChildrenCategoriesSub.length > 0 ? (
+                                      listChildrenCategoriesSub.map((subChild) => (
+                                        <button
+                                          key={subChild.id}
+                                          onClick={() => {
+                                            navigate(`/product?category=${subChild.id}`);
+                                            close();
+                                          }}
+                                          className="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-brand-gray-light text-brand-primary hover:text-brand-accent transition-all"
+                                        >
+                                          {subChild.name}
+                                        </button>
+                                      ))
+                                    ) : (
+                                      <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Không có chi tiết danh mục</p>
+                                    )
+                                  ) : (
+                                    <p className="text-xs text-brand-gray-text pl-3 py-2 italic">Chọn danh mục con để xem</p>
+                                  )}
+                                </div>
+
+                                {/* Column 4: Promotional Asset */}
+                                <div className="flex flex-col justify-between">
+                                  <div className="relative rounded-xl overflow-hidden bg-brand-gray-light aspect-[4/3] shadow-md group">
+                                    <img
+                                      src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&q=80&w=400"
+                                      alt="Featured Promotion"
+                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/80 to-transparent p-4 flex flex-col justify-end">
+                                      <p className="text-white text-xs font-bold uppercase tracking-wider">New Arrivals</p>
+                                      <p className="text-white text-sm font-semibold mt-1">Đồ thể thao chạy bộ mới nhất</p>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => {
+                                      navigate('/product');
+                                      close();
+                                    }}
+                                    className="w-full mt-3 bg-brand-primary hover:bg-brand-accent text-white py-2 px-4 rounded-xl text-xs font-bold tracking-wider uppercase btn-tactile transition-all"
+                                  >
+                                    Xem tất cả
+                                  </button>
                                 </div>
                               </div>
-                              <button
-                                onClick={() => navigate('/product')}
-                                className="w-full mt-3 bg-brand-primary hover:bg-brand-accent text-white py-2 px-4 rounded-xl text-xs font-bold tracking-wider uppercase btn-tactile transition-all"
-                              >
-                                Xem tất cả
-                              </button>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </PopoverPanel>
+                        </PopoverPanel>
+                      </>
+                    )}
                   </Popover>
                 ))}
 

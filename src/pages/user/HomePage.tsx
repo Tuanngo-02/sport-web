@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import PromoSection from "../../components/PromoSection";
+import { tag_categories } from "../../constants/categories";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import ProductBox from "../../components/ProductBox";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -84,14 +85,7 @@ const newsItems = [
   },
 ];
 
-const category = [
-  "Quần áo thể thao",
-  "Giày thể thao",
-  "Dụng cụ thể thao",
-  "Phụ kiện thể thao",
-  "Nam",
-  "Nữ",
-];
+
 
 const HomePage = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -272,15 +266,14 @@ const HomePage = () => {
           </h2>
 
           <div className="flex flex-wrap gap-1.5 bg-brand-gray-light p-1 rounded-xl border border-brand-gray-border">
-            {category.map((cat) => (
+            {tag_categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-1.5 rounded-lg font-semibold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer ${
-                  selectedCategory === cat
+                className={`px-4 py-1.5 rounded-lg font-semibold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer ${selectedCategory === cat
                     ? "bg-brand-accent text-white shadow-xs"
                     : "text-brand-gray-text hover:text-brand-primary hover:bg-zinc-200/50"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -327,7 +320,7 @@ const HomePage = () => {
                 {cards[0].title}
               </h3>
               <p className="text-zinc-300 text-xs mt-1 max-w-sm">Trải nghiệm những trang bị tập luyện được thiết kế tối ưu cho hiệu năng tối đa.</p>
-              <button 
+              <button
                 onClick={() => navigate('/product')}
                 className="mt-4 bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-xl btn-tactile w-fit"
               >

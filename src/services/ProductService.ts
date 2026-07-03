@@ -5,7 +5,7 @@ import axios from "../utils/AxiosCustomize";
 
 const getProductByTag = (tag: String): Promise<ApiResponse<Product[]>> => {
     return axios.get(`/product/by-tag`, {
-            params: {
+        params: {
             tag: tag
         }
     })
@@ -15,16 +15,22 @@ const getProductById = (productId: number): Promise<ApiResponse<Product>> => {
 }
 const getProductVariantById = (variantId: number) => {
     return axios.get(`/product/by-variantId`, {
-            params: {
+        params: {
             variantId: variantId
         }
     })
 }
+const getProductByCategoryId = (categoryId: number): Promise<ApiResponse<Product[]>> => {
+    return axios.get(`/product/by-catgegoryId`, {
+        params: {
+            categoryId: categoryId
+        }
+    })
+}
 
-
-const postCreateNewProduct = (product : Product): Promise<ApiResponse<Product>> => {
+const postCreateNewProduct = (product: Product): Promise<ApiResponse<Product>> => {
     // console.log(product);
-    
+
     // const data = new FormData();
     // data.append('name', product.name);
     // data.append('categoryId', product.categoryId.toString());
@@ -36,21 +42,21 @@ const postCreateNewProduct = (product : Product): Promise<ApiResponse<Product>> 
     // data.append('tag', product.tag);
     // data.append('rating', product.rating.toString());  
     // data.append('content', product.content);  
-    
+
     // data.append('gender', product.gender);
-// data.append('variants', JSON.stringify(product.variants || []));
+    // data.append('variants', JSON.stringify(product.variants || []));
     const data = new FormData();
 
-  // Gói toàn bộ object product thành JSON blob
-  const productBlob = new Blob([JSON.stringify(product)], { type: "application/json" });
-  data.append("product", productBlob);
+    // Gói toàn bộ object product thành JSON blob
+    const productBlob = new Blob([JSON.stringify(product)], { type: "application/json" });
+    data.append("product", productBlob);
 
     if (product.imageProduct) {
         data.append('image', product.imageProduct);
     }
-    return  axios.post('/product', data);
+    return axios.post('/product', data);
 }
-const getProductsWithPaginate = (page: number, limit: number,sortBy?: string,sortDir?:string, categoryId?: number): Promise<ApiResponse<PageResponse<Product>>> => {
+const getProductsWithPaginate = (page: number, limit: number, sortBy?: string, sortDir?: string, categoryId?: number): Promise<ApiResponse<PageResponse<Product>>> => {
     const params = new URLSearchParams();
     params.append("page", page.toString());
     params.append("limit", limit.toString());
@@ -73,19 +79,19 @@ const postUpdateProduct = (product: Product): Promise<ApiResponse<Product>> => {
     // data.append('rating', product.rating);  
     // data.append('content', product.content);  
     const productBlob = new Blob([JSON.stringify(product)], { type: "application/json" });
-  data.append("product", productBlob);
+    data.append("product", productBlob);
     if (product.imageProduct) {
         data.append('image', product.imageProduct);
     }
-    return  axios.put('/product', data);
+    return axios.put('/product', data);
 }
-const deleteProduct = (id : number): Promise<ApiResponse<void>> => {
+const deleteProduct = (id: number): Promise<ApiResponse<void>> => {
     return axios.delete(`/product/${id}`);
 }
-const deleteProductVariant = (idProduct: number, idVariant: number): Promise<ApiResponse<void>>  => {
+const deleteProductVariant = (idProduct: number, idVariant: number): Promise<ApiResponse<void>> => {
     return axios.delete(`/product/${idProduct}/variants/${idVariant}`)
 }
-const deleteSizeAndStock = (idProduct: number, idVariant: number, idSizeAndStock: number): Promise<ApiResponse<void>>  => {
+const deleteSizeAndStock = (idProduct: number, idVariant: number, idSizeAndStock: number): Promise<ApiResponse<void>> => {
     return axios.delete(`/product/${idProduct}/variants/${idVariant}/sizes/${idSizeAndStock}`)
 }
 export {
@@ -97,5 +103,6 @@ export {
     deleteProduct,
     deleteProductVariant,
     deleteSizeAndStock,
-    getProductVariantById
+    getProductVariantById,
+    getProductByCategoryId
 }

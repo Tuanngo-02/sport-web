@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ProductList from '../../components/ProductList'
-import { useState } from 'react'
+import { useSearchParams } from 'react-router'
+import { tag_categories } from '../../constants/categories'
 import {
   Dialog,
   DialogBackdrop,
@@ -16,20 +17,15 @@ import {
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
 import BreadcrumbBox from '../../components/BreadcrumbBox'
+import { getProductByCategoryId, getProductByTag } from '../../services/ProductService'
+import { Product } from '../../models/Product'
 
 const sortOptions = [
-  { name: 'Phổ biến nhất', href: '#', current: true },
-  { name: 'Đánh giá tốt nhất', href: '#', current: false },
-  { name: 'Mới nhất', href: '#', current: false },
-  { name: 'Giá: Thấp đến Cao', href: '#', current: false },
-  { name: 'Giá: Cao đến Thấp', href: '#', current: false },
-]
-const subCategories = [
-  { name: 'Trang phục nam', href: '#' },
-  { name: 'Trang phục nữ', href: '#' },
-  { name: 'Thiết bị leo núi', href: '#' },
-  { name: 'Dụng cụ chạy bộ', href: '#' },
-  { name: 'Phụ kiện dã ngoại', href: '#' },
+  { name: 'Phổ biến nhất', sortBy: undefined, sortDir: undefined },
+  { name: 'Đánh giá tốt nhất', sortBy: 'rating', sortDir: 'desc' },
+  { name: 'Mới nhất', sortBy: 'id', sortDir: 'desc' },
+  { name: 'Giá: Thấp đến Cao', sortBy: 'price', sortDir: 'asc' },
+  { name: 'Giá: Cao đến Thấp', sortBy: 'price', sortDir: 'desc' },
 ]
 const filters = [
   {
@@ -71,9 +67,31 @@ const filters = [
 function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(' ');
 }
-
 const ProductUserPage = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [searchParams] = useSearchParams()
+  const categoryIdParam = searchParams.get('category')
+  const categoryId = categoryIdParam ? Number(categoryIdParam) : undefined
+
+  const [currentSort, setCurrentSort] = useState({
+    name: 'Phổ biến nhất',
+    sortBy: undefined as string | undefined,
+    sortDir: undefined as string | undefined
+  });
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [dataProduct, setDataProduct] = useState<Product[]>([]);
+
+  const fetchDataProductByTag = async (tag: String) => {
+    let data = await getProductByTag(tag);
+    if (data && data.code === 1000) {
+      setDataProduct(data.result);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataProductByTag(selectedCategory);
+  }, [selectedCategory]);
+
 
   return (
     <div className="bg-brand-bg min-h-screen font-sans">
@@ -106,13 +124,27 @@ const ProductUserPage = () => {
               <form className="mt-4 px-4">
                 <h3 className="text-xs font-bold text-brand-gray-text uppercase tracking-wider mb-3">Loại sản phẩm</h3>
                 <ul role="list" className="space-y-2 pb-6 text-sm font-semibold text-brand-primary">
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href} className="block py-1 hover:text-brand-accent transition-colors">
-                        {category.name}
-                      </a>
-                    </li>
-                  ))}
+                  {tag_categories.map((category) => {
+                    const isSelected = selectedCategory === category;
+                    return (
+                      <li key={category}>
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSelectedCategory(isSelected ? "" : category);
+                          }}
+                          className={`block py-1 transition-colors ${
+                            isSelected
+                              ? "text-brand-accent font-bold"
+                              : "text-brand-primary hover:text-brand-accent"
+                          }`}
+                        >
+                          {category}
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
 
                 {filters.map((section) => (
@@ -157,7 +189,7 @@ const ProductUserPage = () => {
 
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-20">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-brand-gray-border pb-4 gap-4">
-            <BreadcrumbBox />
+            <BreadcrumbBox categoryId={categoryId} />
 
             <div className="flex items-center gap-4 self-end md:self-auto">
               <Menu as="div" className="relative inline-block text-left">
@@ -173,15 +205,23 @@ const ProductUserPage = () => {
 
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-xl bg-white shadow-xl ring-1 ring-black/5 focus:outline-hidden transition duration-100 ease-out data-closed:scale-95 data-closed:transform data-closed:opacity-0"
+                  className="absolute right-0 z-30 mt-2 w-48 origin-top-right rounded-xl bg-white shadow-xl ring-1 ring-black/5 focus:outline-hidden transition duration-100 ease-out data-closed:scale-95 data-closed:transform data-closed:opacity-0"
                 >
                   <div className="py-1.5 px-1.5 space-y-0.5">
                     {sortOptions.map((option) => (
                       <MenuItem key={option.name}>
                         <a
-                          href={option.href}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentSort({
+                              name: option.name,
+                              sortBy: option.sortBy,
+                              sortDir: option.sortDir
+                            });
+                          }}
                           className={classNames(
-                            option.current ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-primary hover:bg-brand-gray-light',
+                            currentSort.name === option.name ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-primary hover:bg-brand-gray-light',
                             'block px-3 py-2 text-xs font-semibold rounded-lg transition-all',
                           )}
                         >
@@ -192,11 +232,6 @@ const ProductUserPage = () => {
                   </div>
                 </MenuItems>
               </Menu>
-
-              <button type="button" className="p-2 text-brand-gray-text hover:text-brand-primary rounded-full hover:bg-brand-gray-light transition-all cursor-pointer">
-                <span className="sr-only">View grid</span>
-                <Squares2X2Icon aria-hidden="true" className="size-4.5" />
-              </button>
 
               <button
                 type="button"
@@ -220,13 +255,27 @@ const ProductUserPage = () => {
                 <div>
                   <h3 className="text-xs font-bold text-brand-gray-text uppercase tracking-widest mb-3">Loại sản phẩm</h3>
                   <ul role="list" className="space-y-2 text-sm font-semibold text-brand-primary">
-                    {subCategories.map((category) => (
-                      <li key={category.name}>
-                        <a href={category.href} className="hover:text-brand-accent transition-colors block py-0.5">
-                          {category.name}
-                        </a>
-                      </li>
-                    ))}
+                    {tag_categories.map((category) => {
+                      const isSelected = selectedCategory === category;
+                      return (
+                        <li key={category}>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedCategory(isSelected ? "" : category);
+                            }}
+                            className={`transition-colors block py-0.5 ${
+                              isSelected
+                                ? "text-brand-accent font-bold"
+                                : "text-brand-primary hover:text-brand-accent"
+                            }`}
+                          >
+                            {category}
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 
@@ -266,7 +315,12 @@ const ProductUserPage = () => {
 
               {/* Product grid */}
               <div className="lg:col-span-3">
-                <ProductList />
+                <ProductList
+                  categoryId={categoryId}
+                  tag={selectedCategory}
+                  sortBy={currentSort.sortBy}
+                  sortDir={currentSort.sortDir}
+                />
               </div>
             </div>
           </section>

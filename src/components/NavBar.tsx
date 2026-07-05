@@ -27,6 +27,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { CiUser, CiSearch } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { IoCartOutline, IoLogOutOutline } from "react-icons/io5";
+import { getLocalCart } from "../services/CartService";
 
 const navigation = {
   categories: [
@@ -174,28 +175,41 @@ const NavBar = () => {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
 
+  const updateCartQuantity = (currentUserId: number | null) => {
+    const cart = getLocalCart(currentUserId);
+    const quantity = cart.reduce(
+      (total: number, item: any) => total + (item.quantity || 0),
+      0
+    );
+    setTotalQuantity(quantity);
+  };
+
   useEffect(() => {
     fetchRootCategories();
     const userStr = sessionStorage.getItem("user");
     const access_token = sessionStorage.getItem("access_token");
+    let currentUserId: number | null = null;
     if (userStr && access_token) {
       setToken(access_token);
       const user = JSON.parse(userStr);
+      currentUserId = user.id;
       setUserId(user.id);
       setFullName(user.name);
     }
+    updateCartQuantity(currentUserId);
   }, []);
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart_guest");
-    if (storedCart) {
-      const parsedCart = JSON.parse(storedCart);
-      const quantity = parsedCart.reduce(
-        (total: number, item: any) => total + (item.quantity || 0),
-        0
-      );
-      setTotalQuantity(quantity);
-    }
+    const handleCartUpdate = () => {
+      const userStr = sessionStorage.getItem("user");
+      const currentUserId = userStr ? JSON.parse(userStr).id : null;
+      updateCartQuantity(currentUserId);
+    };
+
+    window.addEventListener("cart-updated", handleCartUpdate);
+    return () => {
+      window.removeEventListener("cart-updated", handleCartUpdate);
+    };
   }, []);
 
   const fetchRootCategories = async () => {
@@ -241,6 +255,7 @@ const NavBar = () => {
     setToken("");
     setUserId(null);
     setFullName("");
+    updateCartQuantity(null); // Reset badge to guest cart count
     toast.success("Đăng xuất thành công!");
     navigate("/");
   };

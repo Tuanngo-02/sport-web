@@ -7,12 +7,14 @@ import { createNewAddress, getAddressByUserId } from "../../services/AddressServ
 import provinces from "../../assets/data/provinces.json";
 import { Cart } from "../../models/Cart";
 import { Address } from "../../models/Address";
+import { getLocalCart } from "../../services/CartService";
 
 type AddressFormProps = {
   onClose: () => void; 
+  onSuccess: () => void;
 };
 
-function AddressForm({ onClose }: AddressFormProps) {
+function AddressForm({ onClose, onSuccess }: AddressFormProps) {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
@@ -62,6 +64,7 @@ function AddressForm({ onClose }: AddressFormProps) {
       let res = await createNewAddress(userId, newAddress);
       if (res) {
         toast.success(res.message || "Lưu địa chỉ thành công!");
+        onSuccess();
       }
     }
   };
@@ -189,7 +192,6 @@ function AddressForm({ onClose }: AddressFormProps) {
             </button>
             <button
               type="submit"
-              onClick={onClose}
               className="px-5 py-2.5 bg-brand-primary hover:bg-brand-accent text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all btn-tactile cursor-pointer"
             >
               Lưu địa chỉ
@@ -209,7 +211,8 @@ const CheckoutPage = () => {
   const [orderDetail, setOrderDetail] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
   const [listCart, setListCart] = useState<Cart[]>([]);
-  const [addresses, setAddresses] = useState<Address | null>(null);
+  const [listAddresses, setListAddresses] = useState<Address[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -219,30 +222,31 @@ const CheckoutPage = () => {
     if (userStr) {
       const user = JSON.parse(userStr);
       setUserId(user.id); 
+      fetchDataAddress(user.id);
+
+      const cart = getLocalCart(user.id);
+      setListCart(cart.filter((item: any) => item.selected === true));
     }
   }, []);
 
   const fetchDataAddress = async (uid: number) => {
     let res = await getAddressByUserId(uid);
     if (res && res.result) {
-      setAddresses(res.result);
-      setEmail(res.result.user?.email ?? "");
-      setName(res.result.user?.fullName ?? "");
-      setPhone(res.result.user?.phone ?? "");
+      const addressArray = Array.isArray(res.result) ? res.result : [res.result];
+      setListAddresses(addressArray);
+      if (addressArray.length > 0) {
+        setSelectedAddress(addressArray[0]);
+        const firstUser = addressArray[0].user;
+        if (firstUser) {
+          setEmail(firstUser.email ?? "");
+          setName(firstUser.fullName ?? "");
+          setPhone(firstUser.phone ?? "");
+        }
+      } else {
+        setSelectedAddress(null);
+      }
     }
   };
-
-  useEffect(() => {
-    if (userId === null) return;
-    fetchDataAddress(userId);
-  }, [userId]);
-
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart_guest");
-    if (storedCart) {
-      setListCart(JSON.parse(storedCart).filter((item: any) => item.selected === true));
-    }
-  }, []);  
 
   useEffect(() => {
     if (listCart && listCart.length > 0) {
@@ -264,7 +268,7 @@ const CheckoutPage = () => {
       fullName: name,
       email: email,
       phone: phone,
-      addressId: addresses?.id,
+      addressId: selectedAddress?.id,
       orderDetail: orderDetail,
       paymentMethod: paymentMethod,
       totalPrice: totalPrice,
@@ -279,7 +283,6 @@ const CheckoutPage = () => {
     let res = await createCheckout(dataCheckOut);
     if (res && res.code === 1000) {
       toast.success(res.message || "Đặt hàng thành công!");
-      localStorage.setItem("cart_guest", JSON.stringify([])); // clear cart
       navigate("/");
     }
   };
@@ -332,38 +335,78 @@ const CheckoutPage = () => {
 
           {/* Delivery Address */}
           <div className="space-y-4">
-            <h2 className="text-base font-bold font-display text-brand-primary uppercase tracking-wider pb-2.5 border-b border-brand-gray-border">
-              Địa chỉ nhận hàng
-            </h2>
-            <div className="p-4 bg-brand-gray-light/60 border border-brand-gray-border rounded-2xl flex items-center justify-between gap-4">
-              {!addresses || Object.keys(addresses).length === 0 ? (
-                <span className="text-xs font-semibold text-brand-gray-text italic">
-                  Chưa lưu địa chỉ nhận hàng nào.
-                </span>
-              ) : (
-                <span className="text-xs font-bold text-brand-primary leading-relaxed">
-                  {`${addresses.addressDetail}, ${addresses.ward}, ${addresses.district}, ${addresses.city}`}
-                </span>
-              )}
-
-              {!addresses || Object.keys(addresses).length === 0 ? (
-                <button
-                  onClick={() => setOpen(true)}
-                  className="text-xs font-bold text-brand-accent hover:text-brand-accent-hover tracking-wider uppercase flex-shrink-0 cursor-pointer"
-                >
-                  + Thêm địa chỉ
-                </button>
-              ) : (
-                <button
-                  className="text-xs font-bold text-zinc-400 hover:text-brand-accent tracking-wider uppercase flex-shrink-0 cursor-pointer"
-                  onClick={() => setAddresses(null)}
-                >
-                  Thay đổi
-                </button>
-              )}
+            <div className="flex justify-between items-center pb-2.5 border-b border-brand-gray-border">
+              <h2 className="text-base font-bold font-display text-brand-primary uppercase tracking-wider">
+                Địa chỉ nhận hàng
+              </h2>
+              <button
+                onClick={() => setOpen(true)}
+                className="text-xs font-bold text-brand-accent hover:text-brand-accent-hover tracking-wider uppercase cursor-pointer"
+              >
+                + Thêm địa chỉ mới
+              </button>
             </div>
 
-            {open && <AddressForm onClose={() => setOpen(false)} />}
+            {listAddresses.length === 0 ? (
+              <div className="p-4 bg-brand-gray-light/60 border border-brand-gray-border rounded-2xl text-center">
+                <span className="text-xs font-semibold text-brand-gray-text italic">
+                  Chưa lưu địa chỉ nhận hàng nào. Vui lòng thêm địa chỉ mới để thanh toán!
+                </span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {listAddresses.map((addr) => (
+                  <label
+                    key={addr.id}
+                    className={`border p-4 rounded-2xl cursor-pointer flex justify-between items-start transition-all ${
+                      selectedAddress?.id === addr.id
+                        ? "border-brand-primary bg-zinc-50/50 shadow-xs"
+                        : "border-brand-gray-border hover:bg-brand-gray-light/30"
+                    }`}
+                  >
+                    <div className="space-y-1.5 flex-1 pr-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-brand-primary">
+                          {addr.user?.fullName || "Người nhận"}
+                        </span>
+                        {addr.addressType && (
+                          <span className="px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[9px] font-bold rounded-md uppercase tracking-wider">
+                            {addr.addressType}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] font-semibold text-brand-gray-text leading-relaxed">
+                        {addr.addressDetail}
+                      </p>
+                      <p className="text-[11px] font-semibold text-brand-gray-text leading-relaxed">
+                        {`${addr.ward}, ${addr.district}, ${addr.city}`}
+                      </p>
+                      <p className="text-[10px] font-bold text-brand-gray-text/75 uppercase tracking-wider">
+                        {addr.country}
+                      </p>
+                    </div>
+                    <input
+                      type="radio"
+                      name="selected_address"
+                      value={addr.id}
+                      checked={selectedAddress?.id === addr.id}
+                      onChange={() => setSelectedAddress(addr)}
+                      className="size-4 text-brand-accent focus:ring-brand-accent accent-brand-accent mt-0.5 cursor-pointer"
+                    />
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {open && (
+              <AddressForm
+                onClose={() => setOpen(false)}
+                onSuccess={() => {
+                  if (userId) fetchDataAddress(userId);
+                  setOpen(false);
+                }}
+              />
+            )}
           </div>
 
           {/* Payment Methods */}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Cart } from "../../models/Cart";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { updateStock } from "../../services/CartService";
+import { updateStock, getLocalCart, saveLocalCart } from "../../services/CartService";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 
@@ -15,30 +15,21 @@ const CartDetail = () => {
 
   useEffect(() => {
     const userStr = sessionStorage.getItem("user");
+    let currentUserId: number | null = null;
     if (userStr) {
       const user = JSON.parse(userStr);
-      setUserId(user.id); 
+      currentUserId = user.id;
+      setUserId(user.id);
     }
-  }, []);
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart_guest");
-    if (storedCart) {
-      const parsed = JSON.parse(storedCart);
-      const withSelected = parsed.map((item: any) => ({
-        ...item,
-        selected: item.selected ?? false,
-      }));
-      setListCart(withSelected);
-      setCartAfterCheck(withSelected.filter((item: any) => item.selected === true));
-    }
+    const cart = getLocalCart(currentUserId);
+    const withSelected = cart.map((item: any) => ({
+      ...item,
+      selected: item.selected ?? false,
+    }));
+    setListCart(withSelected);
+    setCartAfterCheck(withSelected.filter((item: any) => item.selected === true));
   }, []);
-
-  useEffect(() => {
-    if (listCart.length > 0) {
-      localStorage.setItem("cart_guest", JSON.stringify(listCart));
-    }
-  }, [listCart]);
 
   const toggleSelect = (productId: number) => {
     setListCart((prev) => {
@@ -48,6 +39,7 @@ const CartDetail = () => {
           : item
       );
       setCartAfterCheck(newList.filter((item) => item.selected === true));
+      saveLocalCart(userId, newList);
       return newList;
     });
   };
@@ -78,25 +70,34 @@ const CartDetail = () => {
       action === "plus"
         ? target.quantity + 1
         : target.quantity > 1
-        ? target.quantity - 1
-        : 1;
+          ? target.quantity - 1
+          : 1;
 
-    setListCart((prevCart) => {
-      const newList = prevCart.map((item) =>
-        item.productId === productId ? { ...item, quantity: newQuantity } : item
-      );
-      setCartAfterCheck(newList.filter((item) => item.selected === true));
-      return newList;
-    });
+    // Optimistic update helper
+    const updateList = (qty: number) => {
+      setListCart((prevCart) => {
+        const newList = prevCart.map((item) =>
+          item.productId === productId ? { ...item, quantity: qty } : item
+        );
+        setCartAfterCheck(newList.filter((item) => item.selected === true));
+        saveLocalCart(userId, newList);
+        return newList;
+      });
+    };
+
+    updateList(newQuantity);
 
     try {
       const res = await updateStock(productId, oldQuantity, newQuantity);
-      if (res) {
-        toast.success(res.message);
-      }
-    } catch (err) {
+      // if (res) {
+      //   toast.success(res.message);
+      // }
+    } catch (err: any) {
       console.error("Update stock failed", err);
-      toast.error("Cập nhật thất bại!");
+      const errorMsg = err?.response?.data?.message || "Cập nhật thất bại!";
+      toast.error(errorMsg);
+      // Rollback to old quantity
+      updateList(oldQuantity);
     }
   };
 
@@ -105,7 +106,12 @@ const CartDetail = () => {
       toast.warning("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
       return;
     }
-    navigate("/checkout/8");
+    if (userId === null) {
+      toast.warning("Vui lòng đăng nhập để thanh toán!");
+      navigate("/login?redirect=/cart");
+      return;
+    }
+    navigate(`/checkout/${userId}`);
   };
 
   const allSelected =
@@ -115,6 +121,7 @@ const CartDetail = () => {
     setListCart((prev) => {
       const newList = prev.map((item) => ({ ...item, selected: !allSelected }));
       setCartAfterCheck(newList.filter((item) => item.selected));
+      saveLocalCart(userId, newList);
       return newList;
     });
   };
@@ -123,14 +130,14 @@ const CartDetail = () => {
     const newList = listCart.filter((item) => item.productId !== productId);
     setListCart(newList);
     setCartAfterCheck(newList.filter((item) => item.selected === true));
-    localStorage.setItem("cart_guest", JSON.stringify(newList));
+    saveLocalCart(userId, newList);
     toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
   };
 
   return (
     <div className="bg-brand-bg min-h-screen py-8 font-sans">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left: Product list (col-span 2) */}
         <div className="lg:col-span-2 space-y-6">
           <h1 className="text-2xl md:text-3xl font-extrabold font-display text-brand-primary tracking-tight">
@@ -215,10 +222,14 @@ const CartDetail = () => {
                             className="w-8 text-center font-bold text-xs bg-transparent border-none"
                           />
                           <button
+                            disabled={cartItem.stock !== undefined && cartItem.quantity >= cartItem.stock}
                             onClick={() =>
                               handleQuantityChange(cartItem.productId, "plus", cartItem.size)
                             }
-                            className="w-7 h-7 flex items-center justify-center bg-white hover:bg-zinc-200 text-brand-primary text-sm font-bold rounded-md transition-all cursor-pointer"
+                            className={`w-7 h-7 flex items-center justify-center text-brand-primary text-sm font-bold rounded-md transition-all ${cartItem.stock !== undefined && cartItem.quantity >= cartItem.stock
+                              ? "bg-zinc-100 text-zinc-300 cursor-not-allowed"
+                              : "bg-white hover:bg-zinc-200 cursor-pointer"
+                              }`}
                           >
                             +
                           </button>
@@ -226,7 +237,7 @@ const CartDetail = () => {
 
                         {/* Actions Delete / Edit */}
                         <div className="flex gap-2 text-xs font-bold uppercase tracking-wider">
-                          <button 
+                          <button
                             onClick={() => handleDeleteItem(cartItem.productId)}
                             className="text-brand-accent hover:text-brand-accent-hover p-1.5 rounded-full hover:bg-brand-accent/5 transition-all cursor-pointer flex items-center gap-1"
                           >
@@ -272,7 +283,7 @@ const CartDetail = () => {
               <span>Thuế GTGT</span>
               <span>Đã bao gồm</span>
             </div>
-            
+
             <div className="pt-4 border-t border-brand-gray-border flex justify-between font-bold text-sm text-brand-primary">
               <span>Tổng cộng</span>
               <span className="text-lg font-bold text-brand-accent font-display">
@@ -288,7 +299,7 @@ const CartDetail = () => {
             >
               Tiếp tục thanh toán
             </button>
-            
+
             <button
               onClick={() => navigate("/product")}
               className="w-full bg-white border border-brand-gray-border hover:border-brand-primary text-brand-primary py-3 rounded-xl text-xs font-bold uppercase tracking-wider btn-tactile transition-all cursor-pointer"

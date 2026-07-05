@@ -44,5 +44,7 @@ export interface ProductInCart {
     price: number;
     quantity: number;
     size: string;
-    name: string
+    name: string;
+    stock?: number;
+    baseProductId?: number;
 }

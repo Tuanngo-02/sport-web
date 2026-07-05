@@ -12,6 +12,10 @@ export interface Cart {
     color: string
     image: string
     selected: boolean;
+    user_id?: number;
+    product_id?: number;
+    stock?: number;
+    baseProductId?: number;
 }
 
 export interface updateCartItem {

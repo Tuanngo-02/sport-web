@@ -7,6 +7,7 @@ import { getProductById } from "../../services/ProductService";
 import { useNavigate, useParams } from "react-router";
 import { MapInProduct, Product, ProductInCart, ProductVariant, VariantSizeStock } from "../../models/Product";
 import { toast } from "react-toastify";
+import { getLocalCart, saveLocalCart } from "../../services/CartService";
 
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
@@ -23,11 +24,6 @@ const ProductDetail = () => {
   const [dataProduct, setDataProduct] = useState<Product | null>(null);
   const [dataChangeProduct, setDataChangeProduct] = useState<ProductVariant | null>(null);
   const [mappedProduct, setMappedProduct] = useState<Product | null>(null);
-  const [cart, setCart] = useState<ProductInCart[]>(() => {
-    const stored = localStorage.getItem("cart_guest");
-    return stored ? JSON.parse(stored) : [];
-  });
-
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -105,37 +101,40 @@ const ProductDetail = () => {
       ? Math.round(((dataProduct.price - dataProduct.discountPrice) / dataProduct.price) * 100)
       : 0;
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart_guest");
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cart_guest", JSON.stringify(cart));
-  }, [cart]);
-
   const AddToCart = (product: ProductInCart) => {
     if (!selectedSize) {
       toast.warning("Vui lòng chọn kích thước!");
       return;
     }
-    const exist = cart.find((item) => item.productId === product.productId);
+
+    const userStr = sessionStorage.getItem("user");
+    const currentUserId = userStr ? JSON.parse(userStr).id : null;
+
+    const currentCart = getLocalCart(currentUserId);
+    const exist = currentCart.find((item) => 
+      item.productId === product.productId && 
+      item.size === product.size && 
+      item.color === product.color
+    );
+
+    let updatedCart;
     if (exist) {
-      const updatedCart = cart.map((item) =>
-        item.productId === product.productId
+      updatedCart = currentCart.map((item) =>
+        item.productId === product.productId && 
+        item.size === product.size && 
+        item.color === product.color
           ? {
               ...item,
               quantity: item.quantity + product.quantity,
-              price: (item.quantity + product.quantity) * product.price,
+              price: product.price,
             }
           : item
       );
-      setCart(updatedCart);
     } else {
-      setCart([...cart, { ...product }]);
+      updatedCart = [...currentCart, { ...product, selected: false }];
     }
+
+    saveLocalCart(currentUserId, updatedCart);
     toast.success("Thêm vào giỏ hàng thành công!");
     navigate("/cart");
   };
@@ -356,6 +355,8 @@ const ProductDetail = () => {
                     quantity: cartQuantity,
                     price: dataProduct?.discountPrice || dataProduct?.price || 0,
                     image: dataChangeProduct?.imageProductVariant!,
+                    stock: selectedSize?.stock!,
+                    baseProductId: dataProduct?.id!,
                   })
                 }
                 disabled={!productStatus}

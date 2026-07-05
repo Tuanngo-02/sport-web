@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "react-toastify";
 import { ImSpinner6 } from "react-icons/im";
 import { postLogin } from "../../services/AuthService";
 import { RiHomeLine } from "react-icons/ri";
+import { mergeCartAfterLogin } from "../../services/CartService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,10 +47,14 @@ const Login = () => {
             name: data.result.fullName,
           })
         );
+        
+        // Merge guest cart into user cart
+        mergeCartAfterLogin(data.result.id);
+
         if (data.result.role === "ADMIN") {
           navigate("/admin");
         } else if (data.result.role === "USER") {
-          navigate("/");
+          navigate(redirect);
         }
         toast.success(data.message || "Đăng nhập thành công!");
         setIsLoading(false);

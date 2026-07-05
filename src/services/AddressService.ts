@@ -12,12 +12,14 @@ interface AddressRequest {
 }
 
 const createNewAddress = (id: number, address: AddressRequest): Promise<ApiResponse<Address>> => {
-    return axios.post(`/address/${id}`, address)
+  console.log(address);
+
+  return axios.post(`/address/${id}`, address)
 }
-const getAddressByUserId = (userId: number) : Promise<ApiResponse<Address>> => {
+const getAddressByUserId = (userId: number): Promise<ApiResponse<Address[]>> => {
   return axios.get(`/address/${userId}`)
 }
 export {
-    createNewAddress,
-    getAddressByUserId
+  createNewAddress,
+  getAddressByUserId
 }

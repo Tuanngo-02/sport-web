@@ -7,7 +7,7 @@ import ProductUserPage from './pages/user/ProductUserPage'
 import CartPage from './pages/user/CartPage'
 import ProductDetail from './pages/user/ProductDetail'
 import Dashboard from './pages/admin/Dashboard'
-import Menber from './pages/admin/Member'
+import AdminSummary from './pages/admin/AdminSummary'
 import Member from './pages/admin/Member'
 import { ToastContainer } from 'react-toastify'
 
@@ -42,6 +42,7 @@ const Layout = () => {
                 
             </Route>
             <Route path="admin" element={<Dashboard />}>
+                <Route index element={<AdminSummary />} />
                 <Route path="member" element={<Member />}/> 
                 <Route path="product" element={<ProductPage />}/> 
                 <Route path="order" element={<OrderPage />}/> 

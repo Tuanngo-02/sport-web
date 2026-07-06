@@ -1,19 +1,27 @@
 import React from 'react'
-import { Link, Outlet } from 'react-router'
-import { IoHomeOutline } from "react-icons/io5";
+import { Link, Outlet, useNavigate } from 'react-router'
+import { IoHomeOutline, IoLogOutOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { AiOutlineProduct } from "react-icons/ai";
 import { TbCategoryPlus } from "react-icons/tb";
 import { BsCart3 } from "react-icons/bs";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("access_token");
+    sessionStorage.removeItem("user");
+    navigate("/login");
+  };
+
   return (
     <div className="flex h-screen bg-brand-bg font-sans">
       {/* Sidebar */}
       <div className="fixed w-64 h-full bg-white border-r border-brand-gray-border flex flex-col shadow-xs">
-        <div className="p-5 border-b border-brand-gray-border flex items-center justify-between">
+        <div className="p-4 border-b border-brand-gray-border flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src="/images/logo.svg" alt="GearUp Logo" className="h-8 w-auto object-contain" />
+            <img src="/images/logo.svg" alt="GearUp Logo" className="h-12 w-auto object-contain" />
           </Link>
           <span className="text-[10px] font-bold bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-full uppercase tracking-wider">
             Admin
@@ -60,6 +68,14 @@ const Dashboard = () => {
             <BsCart3 size={16} />
             <span>Đơn hàng</span>
           </Link>
+
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 py-2.5 px-4 rounded-xl transition duration-200 text-rose-600 hover:bg-rose-50 border-l-2 border-transparent hover:border-rose-600 font-semibold text-sm cursor-pointer mt-6"
+          >
+            <IoLogOutOutline size={16} />
+            <span>Đăng xuất</span>
+          </button>
         </nav>
         
         <div className="p-4 border-t border-brand-gray-border text-center text-xs font-bold text-brand-gray-text tracking-widest uppercase">
@@ -74,11 +90,21 @@ const Dashboard = () => {
           <h1 className="text-sm font-bold font-display text-brand-primary uppercase tracking-wider">
             Hệ thống quản lý Admin
           </h1>
-          <div className="flex items-center gap-3 text-xs font-semibold">
-            <span className="w-8 h-8 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold">
-              A
-            </span>
-            <span className="text-brand-primary">Administrator</span>
+          <div className="flex items-center gap-4 text-xs font-semibold">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold">
+                A
+              </span>
+              <span className="text-brand-primary">Administrator</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer text-xs font-bold active:scale-95"
+              title="Đăng xuất"
+            >
+              <IoLogOutOutline className="text-sm" />
+              <span>Đăng xuất</span>
+            </button>
           </div>
         </div>
 

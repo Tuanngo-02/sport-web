@@ -56,7 +56,15 @@ const postCreateNewProduct = (product: Product): Promise<ApiResponse<Product>> =
     }
     return axios.post('/product', data);
 }
-const getProductsWithPaginate = (page: number, limit: number, sortBy?: string, sortDir?: string, categoryId?: number): Promise<ApiResponse<PageResponse<Product>>> => {
+const getProductsWithPaginate = (
+    page: number, 
+    limit: number, 
+    sortBy?: string, 
+    sortDir?: string, 
+    categoryId?: number,
+    name?: string,
+    tag?: string
+): Promise<ApiResponse<PageResponse<Product>>> => {
     const params = new URLSearchParams();
     params.append("page", page.toString());
     params.append("limit", limit.toString());
@@ -65,6 +73,8 @@ const getProductsWithPaginate = (page: number, limit: number, sortBy?: string, s
     if (categoryId !== null && categoryId !== undefined) {
         params.append("categoryId", categoryId.toString());
     }
+    if (name) params.append("name", name);
+    if (tag) params.append("tag", tag);
     return axios.get(`/product?${params.toString()}`);
 }
 const postUpdateProduct = (product: Product): Promise<ApiResponse<Product>> => {

@@ -5,17 +5,27 @@ import PageResponse from "../models/PageResponse";
 import axios from "../utils/AxiosCustomize";
 const getOrdersWithPaginate = (
   page: number,
-  limit: number
+  limit: number,
+  fullName?: string,
+  status?: string
 ): Promise<ApiResponse<PageResponse<Order>>> => {
-  return axios.get(`/checkout?page=${page}&limit=${limit}`);
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  params.append("limit", limit.toString());
+  if (fullName) params.append("fullName", fullName);
+  if (status) params.append("status", status);
+  return axios.get(`/checkout?${params.toString()}`);
 };
 const postUpdateOrder = (
   orderId: number,
-  paymentMethod: string
+  status: string
 ): Promise<ApiResponse<Order>> => {
   return axios.put(`/checkout/${orderId}`, {
-    paymentMethod: paymentMethod,
+    status: status,
   });
+};
+const getOrderDetail = (orderId: number): Promise<ApiResponse<any>> => {
+  return axios.get(`/checkout/${orderId}`);
 };
 const createCheckout = (
   checkout: Checkout
@@ -31,4 +41,4 @@ const createCheckout = (
     checkoutItemRequests: checkout.checkoutItemRequests,
   });
 };
-export { getOrdersWithPaginate, postUpdateOrder, createCheckout };
+export { getOrdersWithPaginate, postUpdateOrder, createCheckout, getOrderDetail };

@@ -155,123 +155,146 @@ const ModalUpdateUser = ({
   return (
     <>
       <Dialog open={show} onClose={() => {}} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 bg-brand-primary/30 backdrop-blur-xs transition-opacity duration-300" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel className="w-full max-w-5xl rounded-xl bg-white p-6">
-            <DialogTitle className="text-xl font-semibold border-b pb-4 mb-6">
-              Tạo mới thành viên
+          <DialogPanel className="w-full max-w-4xl rounded-2xl bg-white shadow-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto border border-zinc-100 transition-all">
+            <DialogTitle className="text-xl font-bold text-brand-primary font-display border-b border-zinc-100 pb-4 mb-6">
+              Chỉnh Sửa Thành Viên
             </DialogTitle>
 
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block mb-1 font-medium">Email</label>
-                <input
-                  type="email"
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+            <form className="space-y-6">
+              {/* THÔNG TIN TÀI KHOẢN */}
+              <div className="bg-zinc-50/70 p-5 rounded-2xl border border-zinc-100 space-y-4">
+                <h3 className="text-xs font-extrabold text-zinc-400 uppercase tracking-widest border-b border-zinc-200 pb-1.5">
+                  Thông tin tài khoản
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Email</label>
+                    <input
+                      type="email"
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm focus:border-brand-primary focus:outline-none bg-white font-medium"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Mật khẩu</label>
+                    <input
+                      type="password"
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm bg-zinc-100/70 text-zinc-400 font-medium cursor-not-allowed"
+                      value={password}
+                      disabled
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Vai trò (Role)</label>
+                    <select
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm focus:border-brand-primary focus:outline-none bg-white font-bold text-zinc-700"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    >
+                      <option value="USER">USER</option>
+                      <option value="ADMIN">ADMIN</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="block mb-1 font-medium">Password</label>
-                <input
-                  type="password"
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={password}
-                  disabled
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+
+              {/* THÔNG TIN CÁ NHÂN */}
+              <div className="bg-zinc-50/70 p-5 rounded-2xl border border-zinc-100 space-y-4">
+                <h3 className="text-xs font-extrabold text-zinc-400 uppercase tracking-widest border-b border-zinc-200 pb-1.5">
+                  Thông tin cá nhân
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Họ và tên</label>
+                    <input
+                      type="text"
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm focus:border-brand-primary focus:outline-none bg-white font-medium"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Ngày sinh</label>
+                    <input
+                      type="date"
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm focus:border-brand-primary focus:outline-none bg-white font-medium"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Giới tính</label>
+                    <select
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm focus:border-brand-primary focus:outline-none bg-white font-medium text-zinc-700"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                    >
+                      <option value="MAN">MAN</option>
+                      <option value="WOMAN">WOMAN</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Số điện thoại</label>
+                    <input
+                      type="text"
+                      className="w-full h-10 border border-zinc-200 rounded-lg px-3 text-sm focus:border-brand-primary focus:outline-none bg-white font-medium"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="block mb-1 font-medium">FullName</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-1 font-medium">Role</label>
-                <select
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="USER">USER</option>
-                  <option value="ADMIN">ADMIN</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-1 font-medium">DateOfBirth</label>
-                <input
-                  type="date"
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-1 font-medium">Phone</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-1 font-medium">Gender</label>
-                <select
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  <option value="MAN">MAN</option>
-                  <option value="WOMAN">WOMAN</option>
-                </select>
-              </div>
-              <div className="col-span-2">
-                <label
-                  htmlFor="labelUpload"
-                  className="inline-flex items-center gap-2 text-blue-600 cursor-pointer hover:underline"
-                >
-                  <BsPlusCircle />
-                  Upload File Image
-                </label>
-                <input
-                  type="file"
-                  id="labelUpload"
-                  hidden
-                  onChange={handleUploadImage}
-                />
-              </div>
-              <div className="col-span-2 text-center">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="max-h-40 object-contain inline-block"
+
+              {/* HÌNH ẢNH ĐẠI DIỆN */}
+              <div className="bg-zinc-50/70 p-5 rounded-2xl border border-zinc-100 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                <div>
+                  <label
+                    htmlFor="labelUploadUpdate"
+                    className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-600 hover:bg-zinc-50 hover:text-zinc-800 transition-colors"
+                  >
+                    <BsPlusCircle className="text-sm text-zinc-500" /> Cập nhật ảnh đại diện
+                  </label>
+                  <input
+                    type="file"
+                    id="labelUploadUpdate"
+                    hidden
+                    onChange={handleUploadImage}
                   />
-                ) : (
-                  <div className="text-gray-500 text-sm">Image preview</div>
-                )}
+                </div>
+
+                <div className="border border-dashed border-zinc-200 p-3 rounded-xl flex justify-center items-center bg-white min-h-[100px] max-h-[140px] overflow-hidden">
+                  {previewImage ? (
+                    <img
+                      src={previewImage}
+                      alt="Preview"
+                      className="max-h-24 object-contain rounded-lg"
+                    />
+                  ) : (
+                    <span className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Xem trước ảnh đại diện</span>
+                  )}
+                </div>
               </div>
             </form>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex justify-end gap-3 mt-8 border-t border-zinc-100 pt-6">
               <button
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+                className="px-5 py-2.5 rounded-xl border border-zinc-200 text-sm font-bold text-zinc-500 hover:bg-zinc-50 transition-colors cursor-pointer"
                 onClick={handleClose}
               >
-                Close
+                Hủy
               </button>
               <button
-                className="text-white bg-gray-800 cursor-pointer hover:bg-gray-900  px-4 py-2 rounded-md"
+                className="px-5 py-2.5 rounded-xl bg-brand-primary hover:bg-brand-accent text-white text-sm font-bold shadow-md transition-all cursor-pointer hover:shadow-lg active:scale-95"
                 onClick={handleSubmitUpdateUser}
               >
-                Save
+                Lưu thay đổi
               </button>
             </div>
           </DialogPanel>

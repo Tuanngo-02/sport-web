@@ -10,4 +10,5 @@ export interface User {
     image: File | null
     userImage?: string | null;
     avatarUrl?: string | null;
+    disabled?: boolean | string;
 }

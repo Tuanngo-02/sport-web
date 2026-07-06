@@ -7,7 +7,10 @@ export interface Order {
     email: string,
     phone: string,
     totalPrice: number,
-    paymentMethod: string
-    address: Address[]
-    checkoutItemResponses: CheckoutItem[]
+    paymentMethod: string,
+    status?: string,
+    address?: any,
+    checkoutItemResponses?: any[],
+    createdDate?: string,
+    orderDetail?: string
 }

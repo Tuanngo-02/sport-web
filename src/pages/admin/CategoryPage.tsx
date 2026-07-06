@@ -27,19 +27,43 @@ const CategoryPage = () => {
   const [subCategory, setSubCategory] = useState("");
   const [parentCategory, setParentCategory] = useState("");
   const [reloadCategory, setReloadCategory] = useState(false);
+
+  const [showFilter, setShowFilter] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [searchType, setSearchType] = useState("");
+
   useEffect(() => {
     fetchListCategoryWithPaginate(1);
   }, []);
   useEffect(() => {
     fetchListProduct();
   }, [reloadCategory]);
+
   const fetchListCategoryWithPaginate = async (page: number) => {
-    let res = await getCategoryWithPaginate(page, LIMIT_PAGE);
+    let res = await getCategoryWithPaginate(page, LIMIT_PAGE, searchName || undefined, searchType || undefined);
     if (res.code === 1000) {
       setListCategories(res.result.data);
       setPageCount(res.result.totalPage);
     }
   };
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchListCategoryWithPaginate(1);
+  };
+
+  const handleClear = async () => {
+    setSearchName("");
+    setSearchType("");
+    setCurrentPage(1);
+    
+    let res = await getCategoryWithPaginate(1, LIMIT_PAGE);
+    if (res.code === 1000) {
+      setListCategories(res.result.data);
+      setPageCount(res.result.totalPage);
+    }
+  };
+
   const fetchListProduct = async () => {
     let res = await getAllCategory();
     setListAllCategories(res.result);
@@ -95,14 +119,54 @@ const CategoryPage = () => {
         </div>
         <div className="mt-4 sm:mt-0">
           <button
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 cursor-pointer hover:bg-gray-900"
-            onClick={() => {}}
-            disabled
+            className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white cursor-pointer transition-colors ${showFilter ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-800 hover:bg-gray-900'}`}
+            onClick={() => setShowFilter(!showFilter)}
           >
-            Fitter Category
+            {showFilter ? "ẨN BỘ LỌC" : "BỘ LỌC"}
           </button>
         </div>
       </div>
+
+      {showFilter && (
+        <div className="bg-white p-4 rounded-xl border border-gray-200 mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 items-end shadow-xs">
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tên danh mục</label>
+            <input
+              type="text"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              placeholder="Nhập tên danh mục..."
+              className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:border-gray-800 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Cấp độ (Root/Leaf)</label>
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:border-gray-800 focus:outline-none bg-white"
+            >
+              <option value="">Tất cả danh mục</option>
+              <option value="root">Danh mục cha (Root)</option>
+              <option value="leaf">Danh mục con (Leaf)</option>
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSearch}
+              className="h-10 px-4 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg text-sm transition-all cursor-pointer flex-1 text-center"
+            >
+              Tìm kiếm
+            </button>
+            <button
+              onClick={handleClear}
+              className="h-10 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg text-sm transition-all cursor-pointer flex-1 text-center"
+            >
+              Xóa bộ lọc
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto mt-10 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* <!-- Form thêm category cha --> */}

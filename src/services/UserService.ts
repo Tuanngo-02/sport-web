@@ -41,8 +41,17 @@ const deleteUser = (userId: number): Promise<ApiResponse<void>> => {
 };
 const getUserWithPaginate = (
   page: number,
-  limit: number
+  limit: number,
+  role?: string,
+  email?: string,
+  fullName?: string
 ): Promise<ApiResponse<PageResponse<User>>> => {
-  return axios.get(`/user?page=${page}&limit=${limit}`);
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  params.append("limit", limit.toString());
+  if (role) params.append("role", role);
+  if (email) params.append("email", email);
+  if (fullName) params.append("fullName", fullName);
+  return axios.get(`/user?${params.toString()}`);
 };
 export { postCreateNewUser, getUserWithPaginate, postUpdateUser, deleteUser };

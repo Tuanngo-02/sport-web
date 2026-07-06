@@ -18,6 +18,10 @@ const Member = () => {
   const [dataDelete, setDataDelete] = useState<User | null>(null);
 
   const [listUsers, setListUsers] = useState<User[]>([]);
+  const [showFilter, setShowFilter] = useState(false);
+  const [searchFullName, setSearchFullName] = useState("");
+  const [searchEmail, setSearchEmail] = useState("");
+  const [searchRole, setSearchRole] = useState("");
 
   //render -> userEffect: trách lỗi
   useEffect(() => {
@@ -26,12 +30,38 @@ const Member = () => {
   }, []);
   //gọi api cập nhật lại giao diện
   const fetchListUsersWithPaginate = async (page: number) => {
-    let res = await getUserWithPaginate(page, LIMIT_USER);
+    let res = await getUserWithPaginate(
+      page,
+      LIMIT_USER,
+      searchRole || undefined,
+      searchEmail || undefined,
+      searchFullName || undefined
+    );
     if (res.code === 1000) {
       setListUsers(res.result.data);
       setPageCount(res.result.totalPage);
     }
   };
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchListUsersWithPaginate(1);
+  };
+
+  const handleClear = async () => {
+    setSearchFullName("");
+    setSearchEmail("");
+    setSearchRole("");
+    setCurrentPage(1);
+
+    // Tải lại toàn bộ dữ liệu khi xóa bộ lọc
+    let res = await getUserWithPaginate(1, LIMIT_USER);
+    if (res.code === 1000) {
+      setListUsers(res.result.data);
+      setPageCount(res.result.totalPage);
+    }
+  };
+
   const handleClickBtnUpdate = (user: User) => {
     setDataUpdate(user);
     setShowModalUpdateUser(true);
@@ -54,12 +84,75 @@ const Member = () => {
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-800 cursor-pointer hover:bg-gray-900 "
           onClick={() => setShowModalCreateUser(true)}
         >
-          ADD USER
+          THÊM NGƯỜI DÙNG
         </button>
-        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white custom-bg-1 cursor-pointer ">
-          FITTER USER
+        <button
+          className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white cursor-pointer transition-colors ${showFilter
+              ? "bg-gray-600 hover:bg-gray-700"
+              : "bg-gray-800 hover:bg-gray-900"
+            }`}
+          onClick={() => setShowFilter(!showFilter)}
+        >
+          {showFilter ? "ẨN BỘ LỌC" : "BỘ LỌC"}
         </button>
       </div>
+
+      {showFilter && (
+        <div className="bg-white p-4 rounded-xl border border-gray-200 mt-4 grid grid-cols-1 sm:grid-cols-4 gap-4 items-end shadow-xs">
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+              Họ và tên
+            </label>
+            <input
+              type="text"
+              value={searchFullName}
+              onChange={(e) => setSearchFullName(e.target.value)}
+              placeholder="Nhập tên..."
+              className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:border-gray-800 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+              Email
+            </label>
+            <input
+              type="text"
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              placeholder="Nhập email..."
+              className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:border-gray-800 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+              Vai trò (Role)
+            </label>
+            <select
+              value={searchRole}
+              onChange={(e) => setSearchRole(e.target.value)}
+              className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:border-gray-800 focus:outline-none bg-white"
+            >
+              <option value="">Tất cả</option>
+              <option value="USER">USER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSearch}
+              className="h-10 px-4 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg text-sm transition-all cursor-pointer flex-1 text-center"
+            >
+              Tìm kiếm
+            </button>
+            <button
+              onClick={handleClear}
+              className="h-10 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg text-sm transition-all cursor-pointer flex-1 text-center"
+            >
+              Xóa bộ lọc
+            </button>
+          </div>
+        </div>
+      )}
       <ModelCreateUser
         show={showModalCreateUser}
         setShow={setShowModalCreateUser}

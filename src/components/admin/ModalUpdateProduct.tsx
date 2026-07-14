@@ -283,7 +283,7 @@ const ModalUpdateProduct = ({
   };
   return (
     <>
-      <Dialog open={show} onClose={() => {}} className="relative z-50">
+      <Dialog open={show} onClose={() => { }} className="relative z-50">
         <div className="fixed inset-0 bg-brand-primary/30 backdrop-blur-xs transition-opacity duration-300" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -291,7 +291,7 @@ const ModalUpdateProduct = ({
             <DialogTitle className="text-xl font-bold text-brand-primary font-display border-b border-zinc-100 pb-4 mb-6">
               Chỉnh Sửa Sản Phẩm
             </DialogTitle>
-            
+
             <form className="space-y-6">
               {/* THÔNG TIN CHUNG */}
               <div className="bg-zinc-50/70 p-5 rounded-2xl border border-zinc-100 space-y-4">

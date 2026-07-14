@@ -72,7 +72,7 @@ const ModalUpdateUser = ({
       setRole(dataUpdate.role);
       //hiển thị image
       if (dataUpdate.avatarUrl) {
-        setPreviewImage(`data:image/jpeg;base64,${dataUpdate.avatarUrl}`);
+        setPreviewImage(dataUpdate.avatarUrl);
       }
     }
   }, [dataUpdate]);
@@ -154,7 +154,7 @@ const ModalUpdateUser = ({
 
   return (
     <>
-      <Dialog open={show} onClose={() => {}} className="relative z-50">
+      <Dialog open={show} onClose={() => { }} className="relative z-50">
         <div className="fixed inset-0 bg-brand-primary/30 backdrop-blur-xs transition-opacity duration-300" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
